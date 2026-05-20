@@ -2,7 +2,7 @@
 /**
  * Workflows list table.
  *
- * @package AbilityWorkflows
+ * @package Baton
  */
 
 declare( strict_types=1 );
@@ -18,7 +18,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * List table for ability workflows.
  */
-class Ability_Workflows_List_Table extends WP_List_Table {
+class Baton_Workflow_List_Table extends WP_List_Table {
 
 	/**
 	 * Constructor.
@@ -38,10 +38,10 @@ class Ability_Workflows_List_Table extends WP_List_Table {
 	 */
 	public function get_columns(): array {
 		return array(
-			'title'       => __( 'Workflow', 'ability-workflows' ),
-			'steps'       => __( 'Steps', 'ability-workflows' ),
-			'modified'    => __( 'Last Modified', 'ability-workflows' ),
-			'actions'     => __( 'Actions', 'ability-workflows' ),
+			'title'       => __( 'Workflow', 'baton' ),
+			'steps'       => __( 'Steps', 'baton' ),
+			'modified'    => __( 'Last Modified', 'baton' ),
+			'actions'     => __( 'Actions', 'baton' ),
 		);
 	}
 
@@ -73,7 +73,7 @@ class Ability_Workflows_List_Table extends WP_List_Table {
 		$order = 'asc' === strtolower( $order ) ? 'ASC' : 'DESC';
 
 		$query_args = array(
-			'post_type'      => Ability_Workflows_CPT::POST_TYPE,
+			'post_type'      => Baton_Workflow_CPT::POST_TYPE,
 			'post_status'    => 'publish',
 			'posts_per_page' => $per_page,
 			'paged'          => $paged,
@@ -118,7 +118,7 @@ class Ability_Workflows_List_Table extends WP_List_Table {
 	 * @return string
 	 */
 	protected function column_title( WP_Post $item ): string {
-		$edit_url = Ability_Workflows_Admin::get_edit_url( (int) $item->ID );
+		$edit_url = Baton_Admin::get_edit_url( (int) $item->ID );
 
 		$title = sprintf(
 			'<strong><a href="%s">%s</a></strong>',
@@ -140,7 +140,7 @@ class Ability_Workflows_List_Table extends WP_List_Table {
 	 * @return string
 	 */
 	protected function column_steps( WP_Post $item ): string {
-		$definition = Ability_Workflows_CPT::get_definition( (int) $item->ID );
+		$definition = Baton_Workflow_CPT::get_definition( (int) $item->ID );
 		$count      = count( $definition['steps'] ?? array() );
 
 		return esc_html( (string) $count );
@@ -163,15 +163,15 @@ class Ability_Workflows_List_Table extends WP_List_Table {
 	 * @return string
 	 */
 	protected function column_actions( WP_Post $item ): string {
-		$edit_url = Ability_Workflows_Admin::get_edit_url( (int) $item->ID );
+		$edit_url = Baton_Admin::get_edit_url( (int) $item->ID );
 		$run_url  = $edit_url . '#aw-run-panel';
 
 		return sprintf(
 			'<a href="%1$s" class="button button-small">%2$s</a> <a href="%3$s" class="button button-small button-primary">%4$s</a>',
 			esc_url( $edit_url ),
-			esc_html__( 'Edit', 'ability-workflows' ),
+			esc_html__( 'Edit', 'baton' ),
 			esc_url( $run_url ),
-			esc_html__( 'Run', 'ability-workflows' )
+			esc_html__( 'Run', 'baton' )
 		);
 	}
 
@@ -179,6 +179,6 @@ class Ability_Workflows_List_Table extends WP_List_Table {
 	 * {@inheritDoc}
 	 */
 	public function no_items(): void {
-		esc_html_e( 'No workflows yet. Create one to chain abilities together.', 'ability-workflows' );
+		esc_html_e( 'No workflows yet. Create one to chain abilities together.', 'baton' );
 	}
 }

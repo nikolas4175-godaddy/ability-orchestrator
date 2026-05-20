@@ -2,7 +2,7 @@
 /**
  * Ability catalog for admin UI.
  *
- * @package AbilityWorkflows
+ * @package Baton
  */
 
 declare( strict_types=1 );
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Formats registered abilities for JavaScript.
  */
-final class Ability_Workflows_Ability_Catalog {
+final class Baton_Ability_Catalog {
 
 	/**
 	 * Get all abilities formatted for admin.
@@ -55,16 +55,20 @@ final class Ability_Workflows_Ability_Catalog {
 		$input_schema  = $ability->get_input_schema();
 		$output_schema = $ability->get_output_schema();
 
+		$is_scalar = Baton_Input_Mapper::is_scalar_input_schema( $input_schema );
+
 		return array(
-			'slug'          => $name,
-			'label'         => $ability->get_label(),
-			'description'   => $ability->get_description(),
-			'category'      => self::get_category_label( $ability ),
-			'input_schema'  => $input_schema,
-			'output_schema' => $output_schema,
-			'input_fields'  => Ability_Workflows_Input_Mapper::schema_property_keys( $input_schema ),
-			'output_fields' => Ability_Workflows_Input_Mapper::schema_property_keys( $output_schema ),
-			'example_input' => self::generate_example_input( $input_schema ),
+			'slug'              => $name,
+			'label'             => $ability->get_label(),
+			'description'       => $ability->get_description(),
+			'category'          => self::get_category_label( $ability ),
+			'input_schema'      => $input_schema,
+			'output_schema'     => $output_schema,
+			'input_is_scalar'   => $is_scalar,
+			'scalar_input_type' => $is_scalar ? Baton_Input_Mapper::get_scalar_type( $input_schema ) : '',
+			'input_fields'      => Baton_Input_Mapper::schema_property_keys( $input_schema ),
+			'output_fields'     => Baton_Input_Mapper::schema_property_keys( $output_schema ),
+			'example_input'     => self::generate_example_input( $input_schema ),
 		);
 	}
 
@@ -78,7 +82,7 @@ final class Ability_Workflows_Ability_Catalog {
 		$category_slug = $ability->get_category();
 
 		if ( empty( $category_slug ) ) {
-			return __( 'Other', 'ability-workflows' );
+			return __( 'Other', 'baton' );
 		}
 
 		if ( function_exists( 'wp_get_ability_category' ) ) {
@@ -95,9 +99,32 @@ final class Ability_Workflows_Ability_Catalog {
 	 * Generate example input from JSON schema.
 	 *
 	 * @param array<string, mixed> $schema Input schema.
-	 * @return array<string, mixed>
+	 * @return mixed
 	 */
-	public static function generate_example_input( array $schema ): array {
+	public static function generate_example_input( array $schema ) {
+		if ( Baton_Input_Mapper::is_scalar_input_schema( $schema ) ) {
+			$type = Baton_Input_Mapper::get_scalar_type( $schema );
+
+			if ( isset( $schema['default'] ) ) {
+				return $schema['default'];
+			}
+
+			if ( isset( $schema['example'] ) ) {
+				return $schema['example'];
+			}
+
+			if ( 'integer' === $type || 'number' === $type ) {
+				$min = isset( $schema['minimum'] ) ? (int) $schema['minimum'] : 0;
+				return max( 1, $min );
+			}
+
+			if ( 'boolean' === $type ) {
+				return false;
+			}
+
+			return '';
+		}
+
 		if ( empty( $schema ) || ! isset( $schema['properties'] ) || ! is_array( $schema['properties'] ) ) {
 			return array();
 		}

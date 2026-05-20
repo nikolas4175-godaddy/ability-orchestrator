@@ -2,7 +2,7 @@
 /**
  * Resolves field-level mappings from workflow / previous-step data.
  *
- * @package AbilityWorkflows
+ * @package Baton
  */
 
 declare( strict_types=1 );
@@ -14,7 +14,176 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Dot-path extraction and input mapping for workflow steps.
  */
-final class Ability_Workflows_Input_Mapper {
+final class Baton_Input_Mapper {
+
+	/**
+	 * JSON Schema types treated as scalar ability input (whole value, not an object).
+	 *
+	 * @var array<int, string>
+	 */
+	private static $scalar_types = array( 'integer', 'number', 'string', 'boolean' );
+
+	/**
+	 * Whether the ability input schema is a single scalar value.
+	 *
+	 * @param array<string, mixed> $schema Input schema.
+	 * @return bool
+	 */
+	public static function is_scalar_input_schema( array $schema ): bool {
+		if ( empty( $schema ) ) {
+			return false;
+		}
+
+		if ( isset( $schema['properties'] ) && is_array( $schema['properties'] ) && ! empty( $schema['properties'] ) ) {
+			return false;
+		}
+
+		$type = $schema['type'] ?? null;
+
+		if ( is_array( $type ) ) {
+			foreach ( $type as $t ) {
+				if ( in_array( $t, self::$scalar_types, true ) ) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		return is_string( $type ) && in_array( $type, self::$scalar_types, true );
+	}
+
+	/**
+	 * Primary scalar type from an input schema.
+	 *
+	 * @param array<string, mixed> $schema Input schema.
+	 * @return string
+	 */
+	public static function get_scalar_type( array $schema ): string {
+		$type = $schema['type'] ?? 'string';
+
+		if ( is_array( $type ) ) {
+			foreach ( self::$scalar_types as $scalar ) {
+				if ( in_array( $scalar, $type, true ) ) {
+					return $scalar;
+				}
+			}
+			return 'string';
+		}
+
+		return in_array( $type, self::$scalar_types, true ) ? $type : 'string';
+	}
+
+	/**
+	 * Resolve ability input from mappings and optional static override.
+	 *
+	 * @param array<string, mixed>              $input_schema    Ability input schema.
+	 * @param mixed                             $static_input    Static JSON value (object array or scalar).
+	 * @param array<int, array<string, string>> $mappings        Field mappings.
+	 * @param mixed                             $previous_output Previous step output.
+	 * @param array<string, mixed>              $initial_input   Workflow-level input.
+	 * @return array{input: mixed, warnings: array<int, string>}
+	 */
+	public static function resolve_input(
+		array $input_schema,
+		$static_input,
+		array $mappings,
+		$previous_output,
+		array $initial_input = array()
+	): array {
+		if ( self::is_scalar_input_schema( $input_schema ) ) {
+			return self::resolve_scalar_input( $static_input, $mappings, $previous_output, $initial_input );
+		}
+
+		$static_array = is_array( $static_input ) ? $static_input : array();
+
+		return self::apply_mappings( $static_array, $mappings, $previous_output, $initial_input );
+	}
+
+	/**
+	 * Resolve input when the ability expects a single scalar.
+	 *
+	 * @param mixed                             $static_input    Static value or empty array.
+	 * @param array<int, array<string, string>> $mappings        Path mappings (target ignored).
+	 * @param mixed                             $previous_output Previous step output.
+	 * @param array<string, mixed>              $initial_input   Workflow-level input.
+	 * @return array{input: mixed, warnings: array<int, string>}
+	 */
+	public static function resolve_scalar_input(
+		$static_input,
+		array $mappings,
+		$previous_output,
+		array $initial_input = array()
+	): array {
+		$warnings = array();
+		$input    = null;
+		$has_path = false;
+
+		foreach ( $mappings as $mapping ) {
+			if ( ! is_array( $mapping ) ) {
+				continue;
+			}
+
+			$path   = $mapping['path'] ?? '';
+			$source = $mapping['source'] ?? 'previous';
+
+			if ( '' === $path ) {
+				continue;
+			}
+
+			$has_path     = true;
+			$source_data  = 'initial' === $source ? $initial_input : $previous_output;
+			$resolved_val = null;
+
+			if ( null === $source_data ) {
+				$warnings[] = sprintf(
+					/* translators: 1: path, 2: source label */
+					__( 'Scalar mapping for path "%1$s" skipped: no %2$s data available.', 'baton' ),
+					$path,
+					'initial' === $source ? __( 'workflow input', 'baton' ) : __( 'previous step', 'baton' )
+				);
+				continue;
+			}
+
+			$resolved_val = self::get_value_at_path( $source_data, $path );
+
+			if ( null === $resolved_val ) {
+				$warnings[] = sprintf(
+					/* translators: %s: dot path */
+					__( 'Scalar mapping skipped: path "%s" not found in source.', 'baton' ),
+					$path
+				);
+				continue;
+			}
+
+			$input = self::coerce_value( $resolved_val );
+			break;
+		}
+
+		if ( self::has_static_scalar_value( $static_input ) ) {
+			$input = self::coerce_value( $static_input );
+		} elseif ( $has_path && null === $input && empty( $warnings ) ) {
+			$warnings[] = __( 'Scalar mapping could not resolve a value from the source path.', 'baton' );
+		}
+
+		return array(
+			'input'    => $input,
+			'warnings' => $warnings,
+		);
+	}
+
+	/**
+	 * Whether static input provides an explicit scalar override.
+	 *
+	 * @param mixed $static_input Static input from definition.
+	 * @return bool
+	 */
+	public static function has_static_scalar_value( $static_input ): bool {
+		if ( is_array( $static_input ) ) {
+			return false;
+		}
+
+		return null !== $static_input && '' !== $static_input;
+	}
 
 	/**
 	 * Get a value from nested data using a dot path (e.g. "id", "user.email", "items.0.id").
@@ -85,7 +254,11 @@ final class Ability_Workflows_Input_Mapper {
 			$path   = isset( $mapping['path'] ) ? self::sanitize_path( (string) $mapping['path'] ) : '';
 			$source = isset( $mapping['source'] ) ? (string) $mapping['source'] : 'previous';
 
-			if ( '' === $target || '' === $path ) {
+			if ( '' === $path ) {
+				continue;
+			}
+
+			if ( '' === $target ) {
 				continue;
 			}
 
@@ -94,9 +267,9 @@ final class Ability_Workflows_Input_Mapper {
 			if ( null === $source_data ) {
 				$warnings[] = sprintf(
 					/* translators: 1: target field, 2: source label */
-					__( 'Mapping for "%1$s" skipped: no %2$s data available.', 'ability-workflows' ),
+					__( 'Mapping for "%1$s" skipped: no %2$s data available.', 'baton' ),
 					$target,
-					'initial' === $source ? __( 'workflow input', 'ability-workflows' ) : __( 'previous step', 'ability-workflows' )
+					'initial' === $source ? __( 'workflow input', 'baton' ) : __( 'previous step', 'baton' )
 				);
 				continue;
 			}
@@ -106,7 +279,7 @@ final class Ability_Workflows_Input_Mapper {
 			if ( null === $value ) {
 				$warnings[] = sprintf(
 					/* translators: 1: dot path, 2: target field */
-					__( 'Mapping for "%2$s" skipped: path "%1$s" not found in source.', 'ability-workflows' ),
+					__( 'Mapping for "%2$s" skipped: path "%1$s" not found in source.', 'baton' ),
 					$path,
 					$target
 				);
@@ -144,7 +317,7 @@ final class Ability_Workflows_Input_Mapper {
 			$path   = isset( $mapping['path'] ) ? self::sanitize_path( (string) $mapping['path'] ) : '';
 			$source = isset( $mapping['source'] ) ? sanitize_text_field( (string) $mapping['source'] ) : 'previous';
 
-			if ( '' === $target || '' === $path ) {
+			if ( '' === $path ) {
 				continue;
 			}
 
@@ -206,7 +379,7 @@ final class Ability_Workflows_Input_Mapper {
 	 */
 	public static function coerce_value( $value ) {
 		if ( is_string( $value ) && is_numeric( $value ) ) {
-			return str_contains( $value, '.' ) ? (float) $value : (int) $value;
+			return false !== strpos( $value, '.' ) ? (float) $value : (int) $value;
 		}
 
 		return $value;

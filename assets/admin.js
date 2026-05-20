@@ -1,7 +1,7 @@
 ( function () {
 	'use strict';
 
-	var cfg = window.AbilityWorkflows || {};
+	var cfg = window.Baton || {};
 	var strings = cfg.strings || {};
 
 	function parseJson( text, fallback ) {
@@ -17,6 +17,45 @@
 
 	function stringifyJson( value ) {
 		return JSON.stringify( value, null, 2 );
+	}
+
+	function formatStepInput( value ) {
+		if ( null === value || '' === value ) {
+			return '';
+		}
+		if ( 'number' === typeof value || 'boolean' === typeof value ) {
+			return String( value );
+		}
+		return stringifyJson( value );
+	}
+
+	function parseStepInput( text, ability ) {
+		if ( ! text || ! text.trim() ) {
+			if ( ability && ability.input_is_scalar ) {
+				return '';
+			}
+			return {};
+		}
+
+		var parsed = parseJson( text, null );
+		if ( null === parsed ) {
+			return ability && ability.input_is_scalar ? text.trim() : {};
+		}
+
+		if ( ability && ability.input_is_scalar ) {
+			if ( 'number' === typeof parsed || 'boolean' === typeof parsed ) {
+				return parsed;
+			}
+			if ( 'string' === typeof parsed && '' !== parsed ) {
+				return parsed;
+			}
+		}
+
+		return parsed || {};
+	}
+
+	function stepUsesScalarInput( ability ) {
+		return ability && ability.input_is_scalar;
 	}
 
 	function getAbilityBySlug( abilities, slug ) {
@@ -146,7 +185,7 @@
 		bindGlobal: function () {
 			var self = this;
 			var addBtn = document.getElementById( 'aw-add-step' );
-			var form = document.getElementById( 'ability-workflows-form' );
+			var form = document.getElementById( 'baton-form' );
 
 			if ( addBtn ) {
 				addBtn.addEventListener( 'click', function () {
@@ -177,6 +216,7 @@
 
 		readMappingsFromEl: function ( stepEl ) {
 			var mappings = [];
+			var isScalar = stepEl.getAttribute( 'data-scalar-input' ) === '1';
 
 			stepEl.querySelectorAll( '.aw-mapping-row' ).forEach( function ( row ) {
 				var source = row.querySelector( '.aw-mapping-source' );
@@ -186,14 +226,18 @@
 				var pathVal = path ? path.value.trim() : '';
 				var targetVal = target ? target.value.trim() : '';
 
-				if ( ! pathVal || ! targetVal ) {
+				if ( ! pathVal ) {
+					return;
+				}
+
+				if ( ! isScalar && ! targetVal ) {
 					return;
 				}
 
 				mappings.push( {
 					source: source ? source.value : 'previous',
 					path: pathVal,
-					target: targetVal,
+					target: isScalar ? '' : targetVal,
 				} );
 			} );
 
@@ -205,13 +249,16 @@
 			var steps = [];
 
 			this.container.querySelectorAll( '.aw-step' ).forEach( function ( stepEl ) {
-				var ability = stepEl.querySelector( '.aw-step-ability' );
+				var abilitySelect = stepEl.querySelector( '.aw-step-ability' );
 				var input = stepEl.querySelector( '.aw-step-input' );
 				var usePrev = stepEl.querySelector( '.aw-step-use-previous' );
+				var abilityMeta = abilitySelect
+					? getAbilityBySlug( self.abilities, abilitySelect.value )
+					: null;
 
 				steps.push( {
-					ability: ability ? ability.value : '',
-					input: parseJson( input ? input.value : '', {} ) || {},
+					ability: abilitySelect ? abilitySelect.value : '',
+					input: parseStepInput( input ? input.value : '', abilityMeta ),
 					use_previous_output: usePrev ? usePrev.checked : false,
 					input_mappings: self.readMappingsFromEl( stepEl ),
 				} );
@@ -233,6 +280,7 @@
 			var mappings = step.input_mappings || [];
 			var prevAbility = this.getPreviousAbility( stepIndex );
 			var currentAbility = getAbilityBySlug( this.abilities, step.ability );
+			var isScalar = stepUsesScalarInput( currentAbility );
 
 			var pathListId = 'aw-path-list-' + stepIndex;
 			var targetListId = 'aw-target-list-' + stepIndex;
@@ -243,13 +291,15 @@
 			var rowsHtml = '';
 			if ( mappings.length ) {
 				mappings.forEach( function ( mapping, rowIndex ) {
-					rowsHtml += StepsEditor.renderMappingRow(
-						mapping,
-						stepIndex,
-						rowIndex,
-						pathListId,
-						targetListId
-					);
+					rowsHtml += isScalar
+						? StepsEditor.renderScalarMappingRow( mapping, stepIndex, pathListId )
+						: StepsEditor.renderMappingRow(
+								mapping,
+								stepIndex,
+								rowIndex,
+								pathListId,
+								targetListId
+						  );
 				} );
 			}
 
@@ -257,8 +307,7 @@
 			if (
 				! showMappings &&
 				currentAbility &&
-				currentAbility.input_fields &&
-				currentAbility.input_fields.length
+				( isScalar || ( currentAbility.input_fields && currentAbility.input_fields.length ) )
 			) {
 				showMappings = true;
 			}
@@ -268,7 +317,14 @@
 			}
 
 			var exampleHint = '';
-			if (
+			if ( isScalar ) {
+				exampleHint =
+					'<p class="description aw-mapping-example">' +
+					escapeHtml(
+						'Example: path "0.plan_id" passes the first membership plan ID (142) as the whole input.'
+					) +
+					'</p>';
+			} else if (
 				stepIndex > 0 &&
 				prevAbility &&
 				prevAbility.output_fields &&
@@ -284,6 +340,42 @@
 							'Example: map path "id" to target "user_id" when the previous step returns a user object.'
 					) +
 					'</p>';
+			}
+
+			if ( isScalar ) {
+				return (
+					'<div class="aw-mappings-section aw-mappings-section--scalar">' +
+					'<p><strong>' +
+					escapeHtml( strings.scalarMappings || 'Scalar input mapping' ) +
+					'</strong></p>' +
+					'<p class="description">' +
+					escapeHtml(
+						strings.scalarMappingsHelp ||
+							'Map a source path to pass that value as the entire input.'
+					) +
+					'</p>' +
+					exampleHint +
+					'<datalist id="' +
+					escapeAttr( pathListId ) +
+					'">' +
+					buildDatalistOptions( pathFields ) +
+					'</datalist>' +
+					'<table class="aw-mappings-table widefat"><thead><tr>' +
+					'<th>' +
+					escapeHtml( strings.sourceColumn || 'Source' ) +
+					'</th><th>' +
+					escapeHtml( strings.sourcePath || 'Source path' ) +
+					'</th><th></th></tr></thead>' +
+					'<tbody class="aw-mappings-rows">' +
+					rowsHtml +
+					'</tbody></table>' +
+					'<p><button type="button" class="button button-small aw-add-mapping" data-step-index="' +
+					stepIndex +
+					'">' +
+					escapeHtml( strings.addMapping || 'Add mapping' ) +
+					'</button></p>' +
+					'</div>'
+				);
 			}
 
 			return (
@@ -325,6 +417,48 @@
 				escapeHtml( strings.addMapping || 'Add mapping' ) +
 				'</button></p>' +
 				'</div>'
+			);
+		},
+
+		renderScalarMappingRow: function ( mapping, stepIndex, pathListId ) {
+			var source = mapping.source || ( stepIndex === 0 ? 'initial' : 'previous' );
+			var path = mapping.path || '';
+
+			var sourceOptions = '';
+			if ( stepIndex === 0 ) {
+				sourceOptions =
+					'<option value="initial" selected>' +
+					escapeHtml( strings.sourceInitial || 'Workflow input' ) +
+					'</option>';
+			} else {
+				sourceOptions =
+					'<option value="previous"' +
+					( source === 'previous' ? ' selected' : '' ) +
+					'>' +
+					escapeHtml( strings.sourcePrevious || 'Previous step' ) +
+					'</option>' +
+					'<option value="initial"' +
+					( source === 'initial' ? ' selected' : '' ) +
+					'>' +
+					escapeHtml( strings.sourceInitial || 'Workflow input' ) +
+					'</option>';
+			}
+
+			return (
+				'<tr class="aw-mapping-row">' +
+				'<td><select class="aw-mapping-source">' +
+				sourceOptions +
+				'</select></td>' +
+				'<td><input type="text" class="aw-mapping-path regular-text" list="' +
+				escapeAttr( pathListId ) +
+				'" value="' +
+				escapeAttr( path ) +
+				'" placeholder="' +
+				escapeAttr( strings.scalarPathPlaceholder || 'e.g. 0.plan_id' ) +
+				'" /></td>' +
+				'<td><button type="button" class="button button-small aw-remove-mapping">' +
+				escapeHtml( strings.removeMapping || 'Remove' ) +
+				'</button></td></tr>'
 			);
 		},
 
@@ -385,13 +519,27 @@
 			el.dataset.index = String( index );
 
 			var ability = getAbilityBySlug( this.abilities, step.ability );
-			var inputJson = stringifyJson( step.input || {} );
+			var isScalar = stepUsesScalarInput( ability );
+			var inputJson = formatStepInput( step.input );
 
-			if ( ability && ( ! step.input || Object.keys( step.input ).length === 0 ) ) {
-				inputJson = stringifyJson( ability.example_input || {} );
+			if (
+				ability &&
+				( '' === inputJson ||
+					( ! isScalar &&
+						'object' === typeof step.input &&
+						! Array.isArray( step.input ) &&
+						0 === Object.keys( step.input || {} ).length ) )
+			) {
+				inputJson = formatStepInput( ability.example_input );
 			}
 
 			var mappingsHtml = this.buildMappingsSection( step, index );
+			var staticHelp = isScalar
+				? strings.scalarStaticHelp ||
+				  'Optional override (e.g. 142). Leave empty to use the mapped path only.'
+				: 'Overrides mapped values for the same keys.';
+
+			el.setAttribute( 'data-scalar-input', isScalar ? '1' : '0' );
 
 			el.innerHTML =
 				'<div class="aw-step-header postbox-header">' +
@@ -422,20 +570,29 @@
 				'> ' +
 				escapeHtml( strings.usePreviousOutput || 'Use previous step output as input' ) +
 				'</label>' +
-				( index > 0
+				( index > 0 && ! isScalar
 					? '<span class="description"> — ' +
 					  escapeHtml(
 							'Ignored when field mappings are set; use mappings for individual fields.'
 					  ) +
 					  '</span>'
 					: '' ) +
+				( index > 0 && isScalar
+					? '<span class="description"> — ' +
+					  escapeHtml( 'Ignored when a scalar path mapping is set.' ) +
+					  '</span>'
+					: '' ) +
 				'</p>' +
 				mappingsHtml +
 				'<p><label><strong>' +
-				escapeHtml( strings.staticInput || 'Static input (JSON)' ) +
+				escapeHtml(
+					isScalar
+						? strings.staticInput + ' (optional override)'
+						: strings.staticInput || 'Static input (JSON)'
+				) +
 				'</strong></label><br>' +
 				'<span class="description">' +
-				escapeHtml( 'Overrides mapped values for the same keys.' ) +
+				escapeHtml( staticHelp ) +
 				'</span><br>' +
 				'<textarea class="aw-step-input large-text code" rows="8">' +
 				escapeHtml( inputJson ) +
@@ -489,8 +646,8 @@
 				var slug = e.target.value;
 				var ability = getAbilityBySlug( self.abilities, slug );
 				if ( ability ) {
-					el.querySelector( '.aw-step-input' ).value = stringifyJson(
-						ability.example_input || {}
+					el.querySelector( '.aw-step-input' ).value = formatStepInput(
+						ability.example_input
 					);
 				}
 				self.steps[ index ].ability = slug;
@@ -654,7 +811,7 @@
 			results.innerHTML = '<p class="aw-run-status">' + escapeHtml( strings.running || 'Running…' ) + '</p>';
 
 			var body = new FormData();
-			body.append( 'action', 'ability_workflows_run' );
+			body.append( 'action', 'baton_run' );
 			body.append( 'nonce', cfg.nonce );
 			body.append( 'workflow_id', btn.getAttribute( 'data-workflow-id' ) );
 			body.append( 'initial_input', initialInput ? initialInput.value : '{}' );
@@ -737,5 +894,16 @@
 	document.addEventListener( 'DOMContentLoaded', function () {
 		StepsEditor.init();
 		RunPanel.init();
+
+		var copyBtn = document.getElementById( 'baton-copy-ability-slug' );
+		var slugEl = document.getElementById( 'baton-ability-slug' );
+		if ( copyBtn && slugEl ) {
+			copyBtn.addEventListener( 'click', function () {
+				var text = slugEl.textContent || '';
+				if ( navigator.clipboard && navigator.clipboard.writeText ) {
+					navigator.clipboard.writeText( text );
+				}
+			} );
+		}
 	} );
 } )();

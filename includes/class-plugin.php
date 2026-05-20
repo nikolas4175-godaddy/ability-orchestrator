@@ -2,7 +2,7 @@
 /**
  * Main plugin bootstrap.
  *
- * @package AbilityWorkflows
+ * @package Baton
  */
 
 declare( strict_types=1 );
@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Loads plugin components.
  */
-final class Ability_Workflows_Plugin {
+final class Baton_Plugin {
 
 	/**
 	 * Singleton instance.
 	 *
-	 * @var Ability_Workflows_Plugin|null
+	 * @var Baton_Plugin|null
 	 */
 	private static $instance = null;
 
@@ -33,9 +33,9 @@ final class Ability_Workflows_Plugin {
 	/**
 	 * Get singleton instance.
 	 *
-	 * @return Ability_Workflows_Plugin
+	 * @return Baton_Plugin
 	 */
-	public static function instance(): Ability_Workflows_Plugin {
+	public static function instance(): Baton_Plugin {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
@@ -50,7 +50,7 @@ final class Ability_Workflows_Plugin {
 		$this->abilities_available = function_exists( 'wp_get_abilities' );
 
 		add_action( 'plugins_loaded', array( $this, 'init' ) );
-		register_activation_hook( ABILITY_WORKFLOWS_FILE, array( $this, 'activate' ) );
+		register_activation_hook( BATON_FILE, array( $this, 'activate' ) );
 	}
 
 	/**
@@ -62,8 +62,23 @@ final class Ability_Workflows_Plugin {
 			return;
 		}
 
-		Ability_Workflows_CPT::register();
-		Ability_Workflows_Admin::register();
+		self::maybe_cleanup_legacy_data();
+
+		Baton_Workflow_CPT::register();
+		Baton_Workflow_Abilities::register();
+		Baton_Admin::register();
+	}
+
+	/**
+	 * One-time cleanup of prototype ability_workflow posts when DB is available.
+	 */
+	private static function maybe_cleanup_legacy_data(): void {
+		if ( get_option( 'baton_legacy_cleaned' ) ) {
+			return;
+		}
+
+		Baton_Legacy_Cleanup::delete_legacy_workflows();
+		update_option( 'baton_legacy_cleaned', true, false );
 	}
 
 	/**
@@ -74,8 +89,15 @@ final class Ability_Workflows_Plugin {
 			return;
 		}
 
-		Ability_Workflows_CPT::register();
+		Baton_Legacy_Cleanup::delete_legacy_workflows();
+
+		Baton_Workflow_CPT::register();
 		flush_rewrite_rules();
+
+		// Register workflow abilities after CPT exists.
+		if ( did_action( 'wp_abilities_api_init' ) ) {
+			Baton_Workflow_Abilities::register_all_workflows();
+		}
 	}
 
 	/**
@@ -89,8 +111,8 @@ final class Ability_Workflows_Plugin {
 		printf(
 			'<div class="notice notice-error"><p>%s</p></div>',
 			esc_html__(
-				'Ability Workflows requires WordPress 6.9+ with the Abilities API (wp_get_abilities).',
-				'ability-workflows'
+				'Baton requires WordPress 6.9+ with the Abilities API (wp_get_abilities).',
+				'baton'
 			)
 		);
 	}

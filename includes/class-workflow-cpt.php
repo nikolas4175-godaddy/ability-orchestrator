@@ -2,7 +2,7 @@
 /**
  * Workflow custom post type.
  *
- * @package AbilityWorkflows
+ * @package Baton
  */
 
 declare( strict_types=1 );
@@ -12,13 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Registers the ability_workflow post type.
+ * Registers the baton_workflow post type.
  */
-final class Ability_Workflows_CPT {
+final class Baton_Workflow_CPT {
 
-	public const POST_TYPE = 'ability_workflow';
+	public const POST_TYPE = 'baton_workflow';
 
-	public const META_DEFINITION = '_ability_workflow_definition';
+	public const META_DEFINITION = '_baton_workflow_definition';
 
 	/**
 	 * Register post type.
@@ -28,21 +28,21 @@ final class Ability_Workflows_CPT {
 	}
 
 	/**
-	 * Register ability_workflow CPT.
+	 * Register baton_workflow CPT.
 	 */
 	public static function register_post_type(): void {
 		register_post_type(
 			self::POST_TYPE,
 			array(
 				'labels'              => array(
-					'name'          => __( 'Ability Workflows', 'ability-workflows' ),
-					'singular_name' => __( 'Ability Workflow', 'ability-workflows' ),
-					'add_new'       => __( 'Add Workflow', 'ability-workflows' ),
-					'add_new_item'  => __( 'Add New Workflow', 'ability-workflows' ),
-					'edit_item'     => __( 'Edit Workflow', 'ability-workflows' ),
-					'view_item'     => __( 'View Workflow', 'ability-workflows' ),
-					'search_items'  => __( 'Search Workflows', 'ability-workflows' ),
-					'not_found'     => __( 'No workflows found.', 'ability-workflows' ),
+					'name'          => __( 'Baton', 'baton' ),
+					'singular_name' => __( 'Ability Workflow', 'baton' ),
+					'add_new'       => __( 'Add Workflow', 'baton' ),
+					'add_new_item'  => __( 'Add New Workflow', 'baton' ),
+					'edit_item'     => __( 'Edit Workflow', 'baton' ),
+					'view_item'     => __( 'View Workflow', 'baton' ),
+					'search_items'  => __( 'Search Workflows', 'baton' ),
+					'not_found'     => __( 'No workflows found.', 'baton' ),
 				),
 				'public'              => false,
 				'show_ui'             => false,
@@ -123,16 +123,13 @@ final class Ability_Workflows_CPT {
 				continue;
 			}
 
-			$input = array();
-			if ( isset( $step['input'] ) && is_array( $step['input'] ) ) {
-				$input = $step['input'];
-			}
+			$input = $step['input'] ?? array();
 
 			$definition['steps'][] = array(
 				'ability'             => $ability,
 				'input'               => $input,
 				'use_previous_output' => ! empty( $step['use_previous_output'] ),
-				'input_mappings'      => Ability_Workflows_Input_Mapper::sanitize_mappings( $step['input_mappings'] ?? array() ),
+				'input_mappings'      => Baton_Input_Mapper::sanitize_mappings( $step['input_mappings'] ?? array() ),
 			);
 		}
 
