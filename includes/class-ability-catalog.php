@@ -55,7 +55,9 @@ final class Baton_Ability_Catalog {
 		$input_schema  = $ability->get_input_schema();
 		$output_schema = $ability->get_output_schema();
 
-		$is_scalar = Baton_Input_Mapper::is_scalar_input_schema( $input_schema );
+		$is_scalar         = Baton_Input_Mapper::is_scalar_input_schema( $input_schema );
+		$input_catalog     = Baton_Schema_Paths::input_target_catalog( $input_schema );
+		$output_catalog    = Baton_Schema_Paths::output_path_catalog( $output_schema );
 
 		return array(
 			'slug'              => $name,
@@ -68,6 +70,14 @@ final class Baton_Ability_Catalog {
 			'scalar_input_type' => $is_scalar ? Baton_Input_Mapper::get_scalar_type( $input_schema ) : '',
 			'input_fields'      => Baton_Input_Mapper::schema_property_keys( $input_schema ),
 			'output_fields'     => Baton_Input_Mapper::schema_property_keys( $output_schema ),
+			'input_summary'     => Baton_Schema_Paths::io_summary( $input_schema ),
+			'output_summary'    => Baton_Schema_Paths::io_summary( $output_schema ),
+			'input_targets'     => $input_catalog['targets'],
+			'target_selectable' => $input_catalog['selectable'],
+			'target_display'    => $input_catalog['display'],
+			'output_paths'      => $output_catalog['paths'],
+			'source_selectable' => $output_catalog['selectable'],
+			'source_display'    => $output_catalog['display'],
 			'example_input'     => self::generate_example_input( $input_schema ),
 		);
 	}

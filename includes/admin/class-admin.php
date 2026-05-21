@@ -129,10 +129,10 @@ final class Baton_Admin {
 		echo '<h1>' . esc_html( $title ) . '</h1>';
 		echo '<p><a href="' . esc_url( $list_url ) . '">&larr; ' . esc_html__( 'Back to workflows', 'baton' ) . '</a></p>';
 
-		echo '<script type="application/json" id="aw-abilities-data">';
+		echo '<script type="application/json" id="baton-abilities-data">';
 		echo wp_json_encode( Baton_Ability_Catalog::get_all() );
 		echo '</script>';
-		echo '<script type="application/json" id="aw-definition-data">';
+		echo '<script type="application/json" id="baton-definition-data">';
 		echo wp_json_encode( $definition );
 		echo '</script>';
 
@@ -154,10 +154,9 @@ final class Baton_Admin {
 			self::render_ability_slug_panel( $post_id );
 		}
 
-		echo '<h2>' . esc_html__( 'Steps', 'baton' ) . '</h2>';
-		echo '<p class="description">' . esc_html__( 'Add abilities in the order they should run. Each step executes after the previous one completes.', 'baton' ) . '</p>';
-		echo '<div id="aw-steps-container"></div>';
-		echo '<p><button type="button" class="button" id="aw-add-step">' . esc_html__( 'Add Step', 'baton' ) . '</button></p>';
+		echo '<h2>' . esc_html__( 'Workflow', 'baton' ) . '</h2>';
+		echo '<p class="description">' . esc_html__( 'Chain ability steps in order. Data filter nodes between steps define run-time data flow; input/output on each step shows that ability’s schema (its contract), not your mappings.', 'baton' ) . '</p>';
+		echo '<div id="baton-editor-root"></div>';
 
 		echo '<input type="hidden" name="workflow_definition" id="workflow_definition" value="' . esc_attr( (string) wp_json_encode( $definition ) ) . '" />';
 
@@ -375,68 +374,100 @@ final class Baton_Admin {
 			return;
 		}
 
-		wp_register_script(
-			'baton-admin',
-			BATON_URL . 'assets/admin.js',
-			array(),
-			BATON_VERSION,
-			true
-		);
-
 		wp_register_style(
 			'baton-admin',
 			BATON_URL . 'assets/admin.css',
 			array(),
 			BATON_VERSION
 		);
+		wp_register_style(
+			'baton-editor',
+			BATON_URL . 'assets/baton-editor.css',
+			array( 'baton-admin' ),
+			BATON_VERSION
+		);
 
 		$action = isset( $_GET['action'] ) ? sanitize_text_field( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 		if ( in_array( $action, array( 'edit', 'new' ), true ) ) {
-			wp_enqueue_script( 'baton-admin' );
-			wp_enqueue_style( 'baton-admin' );
+			self::enqueue_editor_assets();
 		}
 
+		$post_id = isset( $_GET['workflow_id'] ) ? absint( $_GET['workflow_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( $post_id > 0 && in_array( $action, array( 'edit', '' ), true ) ) {
+			self::enqueue_run_panel_assets();
+		}
+	}
+
+	/**
+	 * Enqueue React workflow editor bundle.
+	 */
+	private static function enqueue_editor_assets(): void {
+		$asset_file = BATON_DIR . 'build/index.asset.php';
+		$script_url = BATON_URL . 'build/index.js';
+
+		if ( ! file_exists( $asset_file ) ) {
+			add_action(
+				'admin_notices',
+				static function (): void {
+					echo '<div class="notice notice-warning"><p>';
+					echo esc_html__(
+						'Baton editor assets are missing. Run npm install && npm run build in the plugin directory.',
+						'baton'
+					);
+					echo '</p></div>';
+				}
+			);
+			return;
+		}
+
+		$asset = include $asset_file;
+
+		wp_enqueue_script(
+			'baton-editor',
+			$script_url,
+			$asset['dependencies'],
+			$asset['version'],
+			true
+		);
+
+		wp_enqueue_style( 'baton-admin' );
+		wp_enqueue_style( 'baton-editor' );
+
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( 'baton-editor', 'baton', BATON_DIR . 'languages' );
+		}
+	}
+
+	/**
+	 * Enqueue run panel script on saved workflow edit screen.
+	 */
+	private static function enqueue_run_panel_assets(): void {
+		wp_enqueue_script(
+			'baton-admin-run',
+			BATON_URL . 'assets/admin-run.js',
+			array(),
+			BATON_VERSION,
+			true
+		);
+
 		wp_localize_script(
-			'baton-admin',
+			'baton-admin-run',
 			'Baton',
 			array(
-				'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( self::NONCE_ACTION ),
-				'strings'  => array(
-					'step'                 => __( 'Step', 'baton' ),
-					'ability'              => __( 'Ability', 'baton' ),
-					'selectAbility'        => __( 'Select an ability…', 'baton' ),
-					'staticInput'          => __( 'Static input (JSON)', 'baton' ),
-					'usePreviousOutput'    => __( 'Use previous step output as input', 'baton' ),
-					'moveUp'               => __( 'Move up', 'baton' ),
-					'moveDown'             => __( 'Move down', 'baton' ),
-					'removeStep'           => __( 'Remove step', 'baton' ),
-					'inputSchema'          => __( 'Input schema', 'baton' ),
-					'outputSchema'         => __( 'Output schema', 'baton' ),
-					'running'              => __( 'Running workflow…', 'baton' ),
-					'runSuccess'           => __( 'Workflow completed successfully.', 'baton' ),
-					'runFailed'            => __( 'Workflow failed.', 'baton' ),
-					'invalidJson'          => __( 'Invalid JSON.', 'baton' ),
-					'noSteps'              => __( 'Add at least one step before running.', 'baton' ),
-					'fieldMappings'        => __( 'Field mappings', 'baton' ),
-					'fieldMappingsHelp'    => __( 'Map a value from the previous step (or workflow input on step 1) into a specific input field. Static JSON is merged last and overrides mapped values.', 'baton' ),
-					'scalarMappings'       => __( 'Scalar input mapping', 'baton' ),
-					'scalarMappingsHelp'   => __( 'This ability expects a single value (e.g. an integer). Map a source path to pass that value as the entire input. Static input overrides the mapped value.', 'baton' ),
-					'scalarPathPlaceholder' => __( 'e.g. 0.plan_id', 'baton' ),
-					'scalarStaticHelp'     => __( 'Optional override (e.g. 142). Leave empty to use the mapped path only.', 'baton' ),
-					'sourceColumn'         => __( 'Source', 'baton' ),
-					'sourcePrevious'       => __( 'Previous step', 'baton' ),
-					'mappingExample'       => __( 'Example: map path "id" to target "user_id" when the previous step returns a user object.', 'baton' ),
-					'sourceInitial'        => __( 'Workflow input', 'baton' ),
-					'sourcePath'           => __( 'Source path', 'baton' ),
-					'targetField'          => __( 'Target field', 'baton' ),
-					'addMapping'           => __( 'Add mapping', 'baton' ),
-					'removeMapping'        => __( 'Remove', 'baton' ),
-					'pathPlaceholder'      => __( 'e.g. id', 'baton' ),
-					'targetPlaceholder'    => __( 'e.g. user_id', 'baton' ),
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( self::NONCE_ACTION ),
+				'strings' => array(
+					'running'    => __( 'Running workflow…', 'baton' ),
+					'runSuccess' => __( 'Workflow completed successfully.', 'baton' ),
+					'runFailed'  => __( 'Workflow failed.', 'baton' ),
+					'invalidJson' => __( 'Invalid JSON.', 'baton' ),
+					'noSteps'    => __( 'Add at least one step before running.', 'baton' ),
 				),
 			)
 		);
+
+		wp_enqueue_style( 'baton-admin' );
 	}
 
 	/**

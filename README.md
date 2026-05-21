@@ -16,7 +16,19 @@ Baton is a WordPress plugin that adds a thin, lightweight layer used by admins t
 
 ## Usage
 
-**Tools → Baton** — create workflows, map fields between steps (e.g. `core/get-user-info` `id` → `user_id`), run them from the admin, and reference saved workflows as `baton/workflow-{post_id}` in other workflows.
+**Tools → Baton** — create workflows in the visual editor (vertical step cards, data filters on connectors), run them from the admin, and reference saved workflows as `baton/workflow-{post_id}` in other workflows.
+
+## Building the editor UI
+
+The workflow editor is a React bundle built with `@wordpress/scripts`:
+
+```bash
+cd wp-content/plugins/baton   # or your clone path
+npm install
+npm run build
+```
+
+After making any changes within `src/`, run `npm run build` (or `npm start` while developing). The built files land in `build/` and are enqueued on the workflow edit screen.
 
 ## License
 
