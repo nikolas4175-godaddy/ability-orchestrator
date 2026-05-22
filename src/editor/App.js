@@ -377,20 +377,67 @@ function DataFilterPanel( {
 }
 
 function IoDetailPanel( { panel, abilities, steps, onClose, onInputChange } ) {
+	const step = panel ? steps[ panel.stepIndex ] : null;
+	const ability = step ? getAbility( abilities, step.ability ) : null;
+	const isInput = panel?.kind === 'input';
+	const formattedInput = formatStepInput( step?.input, ability );
+
+	const [ inputDraft, setInputDraft ] = useState( formattedInput );
+	const [ jsonError, setJsonError ] = useState( null );
+
+	// Reset draft only when opening a different step/ability panel, not on each keystroke.
+	useEffect( () => {
+		if ( ! panel || ! isInput ) {
+			return;
+		}
+		setInputDraft( formatStepInput( steps[ panel.stepIndex ]?.input, ability ) );
+		setJsonError( null );
+	}, [ panel?.stepIndex, panel?.kind, ability?.slug, isInput ] );
+
 	if ( ! panel ) {
 		return null;
 	}
 
-	const step = steps[ panel.stepIndex ];
-	const ability = getAbility( abilities, step?.ability );
 	if ( ! ability ) {
 		return null;
 	}
 
 	const schema =
 		panel.kind === 'input' ? ability.input_schema : ability.output_schema;
-	const staticValue = formatStepInput( step.input, ability );
-	const isInput = panel.kind === 'input';
+
+	const handleInputDraftChange = ( text ) => {
+		setInputDraft( text );
+
+		if ( ability.input_is_scalar ) {
+			onInputChange( panel.stepIndex, parseStepInput( text, ability ) );
+			setJsonError( null );
+			return;
+		}
+
+		if ( ! text || ! String( text ).trim() ) {
+			onInputChange( panel.stepIndex, {} );
+			setJsonError( null );
+			return;
+		}
+
+		try {
+			const parsed = JSON.parse( text );
+			onInputChange( panel.stepIndex, parsed ?? {} );
+			setJsonError( null );
+		} catch ( e ) {
+			setJsonError(
+				__(
+					'Invalid JSON — keep editing or fix before saving the workflow.',
+					'baton'
+				)
+			);
+		}
+	};
+
+	const handleClose = () => {
+		setJsonError( null );
+		onClose();
+	};
 
 	return (
 		<Modal
@@ -399,7 +446,7 @@ function IoDetailPanel( { panel, abilities, steps, onClose, onInputChange } ) {
 					? `${ __( 'Ability input schema', 'baton' ) } — ${ __( 'Step', 'baton' ) } ${ panel.stepIndex + 1 }`
 					: `${ __( 'Ability output schema', 'baton' ) } — ${ __( 'Step', 'baton' ) } ${ panel.stepIndex + 1 }`
 			}
-			onRequestClose={ onClose }
+			onRequestClose={ handleClose }
 		>
 			<Notice status="info" isDismissible={ false }>
 				{ __(
@@ -424,6 +471,11 @@ function IoDetailPanel( { panel, abilities, steps, onClose, onInputChange } ) {
 			</Panel>
 			{ isInput && (
 				<div className="baton-static-input">
+					{ jsonError && (
+						<Notice status="warning" isDismissible={ false }>
+							{ jsonError }
+						</Notice>
+					) }
 					{ ability.input_is_scalar ? (
 						<TextControl
 							label={ __( 'Static input (optional override)', 'baton' ) }
@@ -431,13 +483,8 @@ function IoDetailPanel( { panel, abilities, steps, onClose, onInputChange } ) {
 								'Fixed value merged at run time; overrides data filter mappings for this step.',
 								'baton'
 							) }
-							value={ staticValue }
-							onChange={ ( text ) =>
-								onInputChange(
-									panel.stepIndex,
-									parseStepInput( text, ability )
-								)
-							}
+							value={ inputDraft }
+							onChange={ handleInputDraftChange }
 						/>
 					) : (
 						<TextareaControl
@@ -446,20 +493,15 @@ function IoDetailPanel( { panel, abilities, steps, onClose, onInputChange } ) {
 								'Fixed fields merged at run time; overrides matching keys from data filters.',
 								'baton'
 							) }
-							value={ staticValue }
-							onChange={ ( text ) =>
-								onInputChange(
-									panel.stepIndex,
-									parseStepInput( text, ability )
-								)
-							}
+							value={ inputDraft }
+							onChange={ handleInputDraftChange }
 							rows={ 6 }
 						/>
 					) }
 				</div>
 			) }
 			<div className="baton-modal-actions">
-				<Button variant="primary" onClick={ onClose }>
+				<Button variant="primary" onClick={ handleClose }>
 					{ __( 'Close', 'baton' ) }
 				</Button>
 			</div>

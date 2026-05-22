@@ -76,7 +76,11 @@ export function parseStepInput( text, ability ) {
 		}
 		return parsed || {};
 	} catch ( e ) {
-		return ability?.input_is_scalar ? String( text ).trim() : {};
+		if ( ability?.input_is_scalar ) {
+			return String( text ).trim();
+		}
+		// Caller should keep a local draft while typing; do not use this return for live textarea binding.
+		return {};
 	}
 }
 
