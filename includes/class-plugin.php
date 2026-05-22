@@ -50,13 +50,18 @@ final class Baton_Plugin {
 		$this->abilities_available = function_exists( 'wp_get_abilities' );
 
 		add_action( 'plugins_loaded', array( $this, 'init' ) );
-		register_activation_hook( BATON_FILE, array( $this, 'activate' ) );
 	}
 
 	/**
 	 * Initialize plugin hooks.
 	 */
 	public function init(): void {
+		load_plugin_textdomain(
+			'baton',
+			false,
+			dirname( plugin_basename( BATON_FILE ) ) . '/languages'
+		);
+
 		if ( ! $this->abilities_available ) {
 			add_action( 'admin_notices', array( $this, 'render_missing_api_notice' ) );
 			return;
@@ -68,9 +73,16 @@ final class Baton_Plugin {
 	}
 
 	/**
+	 * Plugin deactivation.
+	 */
+	public static function deactivate(): void {
+		flush_rewrite_rules();
+	}
+
+	/**
 	 * Plugin activation.
 	 */
-	public function activate(): void {
+	public static function activate(): void {
 		if ( ! function_exists( 'wp_get_abilities' ) ) {
 			return;
 		}

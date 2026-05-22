@@ -506,7 +506,7 @@ final class Baton_Admin {
 				wp_send_json_error( array( 'message' => __( 'Invalid workflow input JSON.', 'baton' ) ) );
 			}
 			if ( is_array( $initial ) ) {
-				$definition['initial_input'] = $initial;
+				$definition['initial_input'] = Baton_Input_Sanitizer::sanitize_input_array( $initial );
 			}
 		}
 

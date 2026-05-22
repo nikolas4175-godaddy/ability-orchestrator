@@ -105,8 +105,8 @@ final class Baton_Workflow_CPT {
 	public static function sanitize_definition( array $raw ) {
 		$definition = self::default_definition();
 
-		if ( isset( $raw['initial_input'] ) && is_array( $raw['initial_input'] ) ) {
-			$definition['initial_input'] = $raw['initial_input'];
+		if ( isset( $raw['initial_input'] ) ) {
+			$definition['initial_input'] = Baton_Input_Sanitizer::sanitize_input_array( $raw['initial_input'] );
 		}
 
 		if ( ! isset( $raw['steps'] ) || ! is_array( $raw['steps'] ) ) {
@@ -123,7 +123,7 @@ final class Baton_Workflow_CPT {
 				continue;
 			}
 
-			$input = $step['input'] ?? array();
+			$input = Baton_Input_Sanitizer::sanitize_input_array( $step['input'] ?? array() );
 
 			$definition['steps'][] = array(
 				'ability'             => $ability,

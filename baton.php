@@ -6,9 +6,11 @@
  * Requires at least: 6.9
  * Requires PHP:      7.4
  * Author:            Nik McLaughlin
- * License:           GPL v2 or later
+ * Plugin URI:        https://github.com/nikolas4175-godaddy/ability-orchestrator
+ * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       baton
+ * Domain Path:       /languages
  *
  * @package Baton
  */
@@ -24,6 +26,7 @@ define( 'BATON_FILE', __FILE__ );
 define( 'BATON_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BATON_URL', plugin_dir_url( __FILE__ ) );
 
+require_once BATON_DIR . 'includes/class-input-sanitizer.php';
 require_once BATON_DIR . 'includes/class-schema-paths.php';
 require_once BATON_DIR . 'includes/class-ability-catalog.php';
 require_once BATON_DIR . 'includes/class-input-mapper.php';
@@ -33,5 +36,8 @@ require_once BATON_DIR . 'includes/class-workflow-abilities.php';
 require_once BATON_DIR . 'includes/admin/class-workflow-list-table.php';
 require_once BATON_DIR . 'includes/admin/class-admin.php';
 require_once BATON_DIR . 'includes/class-plugin.php';
+
+register_activation_hook( BATON_FILE, array( 'Baton_Plugin', 'activate' ) );
+register_deactivation_hook( BATON_FILE, array( 'Baton_Plugin', 'deactivate' ) );
 
 Baton_Plugin::instance();

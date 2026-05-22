@@ -264,7 +264,7 @@ final class Baton_Workflow_Abilities {
 		$definition = Baton_Workflow_CPT::get_definition( $post_id );
 
 		if ( is_array( $input ) && ! empty( $input ) ) {
-			$definition['initial_input'] = $input;
+			$definition['initial_input'] = Baton_Input_Sanitizer::sanitize_input_array( $input );
 		}
 
 		$report = Baton_Workflow_Runner::run( $definition, $post_id );

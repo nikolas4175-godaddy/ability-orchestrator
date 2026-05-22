@@ -1,0 +1,590 @@
+# Copyright (C) 2026 Nik McLaughlin
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Baton 0.4.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/baton\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-05-22T21:43:06+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: baton\n"
+
+#. Plugin Name of the plugin
+#: baton.php
+#: includes/admin/class-admin.php:41
+#: includes/admin/class-admin.php:42
+#: includes/class-workflow-cpt.php:38
+msgid "Baton"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: baton.php
+msgid "https://github.com/nikolas4175-godaddy/ability-orchestrator"
+msgstr ""
+
+#. Description of the plugin
+#: baton.php
+msgid "Create and run admin workflows from registered WordPress Abilities API abilities."
+msgstr ""
+
+#. Author of the plugin
+#: baton.php
+msgid "Nik McLaughlin"
+msgstr ""
+
+#: includes/admin/class-admin.php:54
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/admin/class-admin.php:79
+msgid "Baton — Orchestrating WP Abilities"
+msgstr ""
+
+#: includes/admin/class-admin.php:83
+msgid "Workflow saved."
+msgstr ""
+
+#: includes/admin/class-admin.php:87
+msgid "Workflow deleted."
+msgstr ""
+
+#: includes/admin/class-admin.php:93
+#: includes/admin/class-admin.php:132
+#: includes/class-workflow-cpt.php:40
+msgid "Add Workflow"
+msgstr ""
+
+#: includes/admin/class-admin.php:95
+#: includes/class-workflow-cpt.php:44
+msgid "Search Workflows"
+msgstr ""
+
+#: includes/admin/class-admin.php:116
+#: includes/admin/class-admin.php:498
+msgid "Workflow not found."
+msgstr ""
+
+#: includes/admin/class-admin.php:132
+#: includes/class-workflow-cpt.php:42
+msgid "Edit Workflow"
+msgstr ""
+
+#: includes/admin/class-admin.php:136
+msgid "Back to workflows"
+msgstr ""
+
+#: includes/admin/class-admin.php:153
+msgid "Title"
+msgstr ""
+
+#: includes/admin/class-admin.php:155
+msgid "Description"
+msgstr ""
+
+#: includes/admin/class-admin.php:163
+#: includes/admin/class-workflow-list-table.php:41
+msgid "Workflow"
+msgstr ""
+
+#: includes/admin/class-admin.php:164
+msgid "Chain ability steps in order. Data filter nodes between steps define run-time data flow; input/output on each step shows that ability’s schema (its contract), not your mappings."
+msgstr ""
+
+#: includes/admin/class-admin.php:170
+msgid "Save Workflow"
+msgstr ""
+
+#: includes/admin/class-admin.php:183
+msgid "Delete this workflow?"
+msgstr ""
+
+#: includes/admin/class-admin.php:183
+msgid "Delete"
+msgstr ""
+
+#: includes/admin/class-admin.php:205
+msgid "Workflow ability"
+msgstr ""
+
+#: includes/admin/class-admin.php:206
+msgid "This workflow is registered as an ability. Use this name in other workflows, the REST API, or tooling that discovers abilities."
+msgstr ""
+
+#: includes/admin/class-admin.php:208
+msgid "Copy"
+msgstr ""
+
+#: includes/admin/class-admin.php:222
+#: includes/admin/class-admin.php:226
+msgid "Run Workflow"
+msgstr ""
+
+#: includes/admin/class-admin.php:223
+msgid "Optional workflow-level input is merged into the first step only."
+msgstr ""
+
+#: includes/admin/class-admin.php:224
+msgid "Workflow input (JSON)"
+msgstr ""
+
+#: includes/admin/class-admin.php:240
+#: includes/admin/class-admin.php:355
+#: includes/admin/class-admin.php:488
+msgid "Insufficient permissions."
+msgstr ""
+
+#: includes/admin/class-admin.php:257
+msgid "Invalid workflow definition JSON."
+msgstr ""
+
+#: includes/admin/class-admin.php:286
+msgid "Title is required."
+msgstr ""
+
+#: includes/admin/class-admin.php:422
+msgid "Baton editor assets are missing. Run npm install && npm run build in the plugin directory."
+msgstr ""
+
+#: includes/admin/class-admin.php:469
+msgid "Running workflow…"
+msgstr ""
+
+#: includes/admin/class-admin.php:470
+msgid "Workflow completed successfully."
+msgstr ""
+
+#: includes/admin/class-admin.php:471
+#: includes/class-workflow-abilities.php:275
+msgid "Workflow failed."
+msgstr ""
+
+#: includes/admin/class-admin.php:472
+msgid "Invalid JSON."
+msgstr ""
+
+#: includes/admin/class-admin.php:473
+msgid "Add at least one step before running."
+msgstr ""
+
+#: includes/admin/class-admin.php:493
+msgid "Workflow ID is required."
+msgstr ""
+
+#: includes/admin/class-admin.php:506
+msgid "Invalid workflow input JSON."
+msgstr ""
+
+#: includes/admin/class-workflow-list-table.php:42
+msgid "Steps"
+msgstr ""
+
+#: includes/admin/class-workflow-list-table.php:43
+msgid "Last Modified"
+msgstr ""
+
+#: includes/admin/class-workflow-list-table.php:44
+msgid "Actions"
+msgstr ""
+
+#: includes/admin/class-workflow-list-table.php:172
+msgid "Edit"
+msgstr ""
+
+#: includes/admin/class-workflow-list-table.php:174
+msgid "Run"
+msgstr ""
+
+#: includes/admin/class-workflow-list-table.php:182
+msgid "No workflows yet. Create one to chain abilities together."
+msgstr ""
+
+#: includes/class-ability-catalog.php:95
+#: src/editor/App.js:45
+msgid "Other"
+msgstr ""
+
+#. translators: 1: path, 2: source label
+#: includes/class-input-mapper.php:140
+#, php-format
+msgid "Scalar mapping for path \"%1$s\" skipped: no %2$s data available."
+msgstr ""
+
+#: includes/class-input-mapper.php:142
+#: includes/class-input-mapper.php:272
+msgid "workflow input"
+msgstr ""
+
+#: includes/class-input-mapper.php:142
+#: includes/class-input-mapper.php:272
+msgid "previous step"
+msgstr ""
+
+#. translators: %s: dot path
+#: includes/class-input-mapper.php:152
+#, php-format
+msgid "Scalar mapping skipped: path \"%s\" not found in source."
+msgstr ""
+
+#: includes/class-input-mapper.php:165
+msgid "Scalar mapping could not resolve a value from the source path."
+msgstr ""
+
+#. translators: 1: target field, 2: source label
+#: includes/class-input-mapper.php:270
+#, php-format
+msgid "Mapping for \"%1$s\" skipped: no %2$s data available."
+msgstr ""
+
+#. translators: 1: dot path, 2: target field
+#: includes/class-input-mapper.php:282
+#, php-format
+msgid "Mapping for \"%2$s\" skipped: path \"%1$s\" not found in source."
+msgstr ""
+
+#: includes/class-plugin.php:109
+msgid "Baton requires WordPress 6.9+ with the Abilities API (wp_get_abilities)."
+msgstr ""
+
+#: includes/class-schema-paths.php:34
+msgid "Integer"
+msgstr ""
+
+#: includes/class-schema-paths.php:36
+msgid "Number"
+msgstr ""
+
+#: includes/class-schema-paths.php:38
+msgid "Boolean"
+msgstr ""
+
+#: includes/class-schema-paths.php:40
+msgid "String"
+msgstr ""
+
+#: includes/class-schema-paths.php:42
+msgid "Array"
+msgstr ""
+
+#: includes/class-schema-paths.php:44
+msgid "Object"
+msgstr ""
+
+#: includes/class-schema-paths.php:46
+msgid "Value"
+msgstr ""
+
+#. translators: %s: type name e.g. Integer
+#: includes/class-schema-paths.php:141
+#, php-format
+msgid "Previous step output (%s)"
+msgstr ""
+
+#. translators: %s: type name e.g. Integer
+#: includes/class-schema-paths.php:173
+#, php-format
+msgid "%s — entire input"
+msgstr ""
+
+#: includes/class-workflow-abilities.php:47
+msgid "Baton Workflows"
+msgstr ""
+
+#: includes/class-workflow-abilities.php:48
+msgid "Composed workflows built from other abilities."
+msgstr ""
+
+#. translators: %d: workflow post ID
+#: includes/class-workflow-abilities.php:163
+#, php-format
+msgid "Baton workflow #%d"
+msgstr ""
+
+#: includes/class-workflow-abilities.php:209
+msgid "Optional workflow-level input merged into the first step."
+msgstr ""
+
+#: includes/class-workflow-cpt.php:39
+msgid "Ability Workflow"
+msgstr ""
+
+#: includes/class-workflow-cpt.php:41
+msgid "Add New Workflow"
+msgstr ""
+
+#: includes/class-workflow-cpt.php:43
+msgid "View Workflow"
+msgstr ""
+
+#: includes/class-workflow-cpt.php:45
+msgid "No workflows found."
+msgstr ""
+
+#: includes/class-workflow-runner.php:32
+msgid "Workflow cycle detected: a workflow cannot call itself directly or indirectly."
+msgstr ""
+
+#: includes/class-workflow-runner.php:51
+msgid "Workflow has no steps."
+msgstr ""
+
+#: includes/class-workflow-runner.php:74
+msgid "Step is missing an ability."
+msgstr ""
+
+#. translators: %s: ability slug
+#: includes/class-workflow-runner.php:85
+#: includes/class-workflow-runner.php:250
+#, php-format
+msgid "Ability \"%s\" not found."
+msgstr ""
+
+#: includes/class-workflow-runner.php:210
+msgid "Previous step output is not an array; static input was used instead."
+msgstr ""
+
+#: includes/class-workflow-runner.php:272
+msgid "Nested workflow not found."
+msgstr ""
+
+#: includes/class-workflow-runner.php:285
+msgid "Nested workflow failed."
+msgstr ""
+
+#: src/editor/App.js:53
+#: src/editor/App.js:58
+msgid "Ability"
+msgstr ""
+
+#: src/editor/App.js:61
+msgid "Select an ability…"
+msgstr ""
+
+#: src/editor/App.js:109
+msgid "Add data filter"
+msgstr ""
+
+#: src/editor/App.js:148
+msgid "From"
+msgstr ""
+
+#: src/editor/App.js:148
+#: src/editor/App.js:153
+#: src/editor/App.js:154
+#: src/editor/App.js:270
+#: src/editor/App.js:399
+#: src/editor/App.js:400
+#: src/editor/App.js:494
+msgid "Step"
+msgstr ""
+
+#: src/editor/App.js:149
+msgid "From workflow input"
+msgstr ""
+
+#: src/editor/App.js:153
+#: src/editor/App.js:154
+msgid "Into"
+msgstr ""
+
+#: src/editor/App.js:161
+msgid "Data filter"
+msgstr ""
+
+#: src/editor/App.js:162
+msgid "Data flow"
+msgstr ""
+
+#: src/editor/App.js:166
+msgid "Clear"
+msgstr ""
+
+#: src/editor/App.js:169
+msgid "Edit mapping"
+msgstr ""
+
+#: src/editor/App.js:270
+msgid "Configure data filter"
+msgstr ""
+
+#: src/editor/App.js:275
+msgid "Data filters define how values move between steps at run time. Ability schemas (on step cards) describe what each ability accepts and returns in general."
+msgstr ""
+
+#: src/editor/App.js:282
+msgid "Source"
+msgstr ""
+
+#: src/editor/App.js:287
+msgid "ability output schema"
+msgstr ""
+
+#: src/editor/App.js:293
+#: src/editor/App.js:333
+msgid "Target"
+msgstr ""
+
+#: src/editor/App.js:298
+msgid "ability input schema"
+msgstr ""
+
+#: src/editor/App.js:304
+msgid "Select an ability on the previous step first."
+msgstr ""
+
+#: src/editor/App.js:312
+#: src/editor/App.js:320
+msgid "Source path"
+msgstr ""
+
+#: src/editor/App.js:315
+msgid "Previous step output"
+msgstr ""
+
+#: src/editor/App.js:321
+msgid "Value taken from the previous step or workflow input."
+msgstr ""
+
+#: src/editor/App.js:324
+msgid "Select path…"
+msgstr ""
+
+#: src/editor/App.js:336
+msgid "Entire input"
+msgstr ""
+
+#: src/editor/App.js:341
+msgid "Target field"
+msgstr ""
+
+#: src/editor/App.js:342
+msgid "Field on the next step’s input object."
+msgstr ""
+
+#: src/editor/App.js:345
+msgid "Select field…"
+msgstr ""
+
+#: src/editor/App.js:360
+msgid "Remove row"
+msgstr ""
+
+#: src/editor/App.js:367
+msgid "Add mapping row"
+msgstr ""
+
+#: src/editor/App.js:372
+msgid "Done"
+msgstr ""
+
+#: src/editor/App.js:399
+msgid "Ability input schema"
+msgstr ""
+
+#: src/editor/App.js:400
+msgid "Ability output schema"
+msgstr ""
+
+#: src/editor/App.js:405
+msgid "This is the ability’s declared contract (JSON Schema). It does not show your workflow mappings — configure those in the data filter nodes between steps."
+msgstr ""
+
+#: src/editor/App.js:419
+msgid "JSON Schema"
+msgstr ""
+
+#: src/editor/App.js:429
+msgid "Static input (optional override)"
+msgstr ""
+
+#: src/editor/App.js:430
+msgid "Fixed value merged at run time; overrides data filter mappings for this step."
+msgstr ""
+
+#: src/editor/App.js:444
+msgid "Static input (JSON)"
+msgstr ""
+
+#: src/editor/App.js:445
+msgid "Fixed fields merged at run time; overrides matching keys from data filters."
+msgstr ""
+
+#: src/editor/App.js:463
+msgid "Close"
+msgstr ""
+
+#: src/editor/App.js:482
+msgid "No input"
+msgstr ""
+
+#: src/editor/App.js:484
+msgid "Unknown"
+msgstr ""
+
+#: src/editor/App.js:492
+msgid "Ability step"
+msgstr ""
+
+#: src/editor/App.js:506
+msgid "Move up"
+msgstr ""
+
+#: src/editor/App.js:513
+msgid "Move down"
+msgstr ""
+
+#: src/editor/App.js:524
+msgid "Remove"
+msgstr ""
+
+#: src/editor/App.js:537
+msgid "Ability contract (schema)"
+msgstr ""
+
+#: src/editor/App.js:540
+msgid "What this ability is designed to accept and return. Use data filter nodes between steps to map actual values at run time."
+msgstr ""
+
+#: src/editor/App.js:547
+msgid "Input schema"
+msgstr ""
+
+#: src/editor/App.js:548
+msgid "declared input"
+msgstr ""
+
+#: src/editor/App.js:554
+msgid "Output schema"
+msgstr ""
+
+#: src/editor/App.js:555
+msgid "declared output"
+msgstr ""
+
+#: src/editor/App.js:649
+msgid "No abilities registered."
+msgstr ""
+
+#: src/editor/App.js:658
+msgid "Ability steps"
+msgstr ""
+
+#: src/editor/App.js:660
+msgid "run abilities in order; input/output chips show each ability’s schema."
+msgstr ""
+
+#: src/editor/App.js:663
+msgid "Data filter nodes"
+msgstr ""
+
+#: src/editor/App.js:665
+msgid "sit between steps and define how values are passed from one step into the next at run time."
+msgstr ""
+
+#: src/editor/App.js:677
+msgid "Add step"
+msgstr ""
