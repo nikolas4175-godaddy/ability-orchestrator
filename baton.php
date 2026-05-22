@@ -6,7 +6,7 @@
  * Requires at least: 6.9
  * Requires PHP:      7.4
  * Author:            Nik McLaughlin
- * Plugin URI:        https://github.com/nikolas4175-godaddy/ability-orchestrator
+ * Plugin URI:        https://github.com/nikolas4175-godaddy/baton
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       baton

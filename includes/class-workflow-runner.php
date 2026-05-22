@@ -19,8 +19,9 @@ final class Baton_Workflow_Runner {
 	/**
 	 * Run a workflow definition.
 	 *
-	 * @param array<string, mixed> $definition Workflow definition.
-	 * @param int                  $workflow_id Optional workflow post ID for hooks.
+	 * @param array<string, mixed> $definition      Workflow definition.
+	 * @param int                  $workflow_id     Optional workflow post ID for hooks.
+	 * @param array<int, int>      $workflow_stack  Post IDs in the current nested workflow chain.
 	 * @return array<string, mixed>
 	 */
 	public static function run( array $definition, int $workflow_id = 0, array $workflow_stack = array() ): array {
@@ -148,11 +149,12 @@ final class Baton_Workflow_Runner {
 	/**
 	 * Resolve input for a step.
 	 *
-	 * @param array<string, mixed> $static_input     Static step input.
-	 * @param bool                 $use_previous     Whether to merge previous output.
-	 * @param mixed                $previous_output  Previous step output.
+	 * @param array<string, mixed>              $static_input     Static step input.
+	 * @param bool                              $use_previous     Whether to merge previous output.
+	 * @param mixed                             $previous_output  Previous step output.
 	 * @param array<string, mixed>              $initial_input    Workflow initial input (first step only).
 	 * @param array<int, array<string, string>> $mappings         Field-level input mappings.
+	 * @param array<string, mixed>              $input_schema     Ability input schema.
 	 * @return array{input: mixed, warnings: array<int, string>}
 	 */
 	public static function resolve_step_input(

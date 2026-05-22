@@ -38,10 +38,10 @@ class Baton_Workflow_List_Table extends WP_List_Table {
 	 */
 	public function get_columns(): array {
 		return array(
-			'title'       => __( 'Workflow', 'baton' ),
-			'steps'       => __( 'Steps', 'baton' ),
-			'modified'    => __( 'Last Modified', 'baton' ),
-			'actions'     => __( 'Actions', 'baton' ),
+			'title'    => __( 'Workflow', 'baton' ),
+			'steps'    => __( 'Steps', 'baton' ),
+			'modified' => __( 'Last Modified', 'baton' ),
+			'actions'  => __( 'Actions', 'baton' ),
 		);
 	}
 

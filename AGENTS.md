@@ -108,6 +108,12 @@ cd wp-content/plugins/baton   # or clone path
 npm install
 npm run build                  # after any src/ change
 npm start                      # watch mode while editing UI
+npm run lint:js
+composer install
+composer phpcs
+composer phpstan
+npx wp-env start               # Docker required
+npm run test:php
 ```
 
 PHP: no separate build step. Use strict types (`declare(strict_types=1);`) and match existing `Baton_*` class style.
@@ -119,7 +125,7 @@ PHP: no separate build step. Use strict types (`declare(strict_types=1);`) and m
 3. **Editor changes** — Always run `npm run build` and commit updated `build/` if the repo ships prebuilt assets.
 4. **Select controls** — Use native `<select>` + `<optgroup>` for grouped ability lists; use `SelectControl` only for flat option lists (e.g. mapping source/target).
 5. **Secrets** — Never commit API keys; workflow definitions may contain site-specific static input.
-6. **Tests** — No automated test suite yet; manual smoke test: save workflow, run from edit screen, nest `baton/workflow-{id}` in another workflow.
+6. **Tests** — `composer test` via wp-env (`npm run test:php`); manual smoke: save workflow, run from edit screen, nest `baton/workflow-{id}` in another workflow.
 
 ## Known gaps / roadmap
 

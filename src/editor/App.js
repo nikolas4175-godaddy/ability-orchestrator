@@ -14,7 +14,6 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
-	connectorSummary,
 	defaultStep,
 	formatStepInput,
 	getAbility,
@@ -39,11 +38,7 @@ function FlowLine() {
 
 function AbilitySelect( { value, abilities, onChange } ) {
 	const groups = useMemo(
-		() =>
-			groupAbilitiesByCategory(
-				abilities,
-				__( 'Other', 'baton' )
-			),
+		() => groupAbilitiesByCategory( abilities, __( 'Other', 'baton' ) ),
 		[ abilities ]
 	);
 
@@ -58,7 +53,9 @@ function AbilitySelect( { value, abilities, onChange } ) {
 				aria-label={ __( 'Ability', 'baton' ) }
 				onChange={ ( event ) => onChange( event.target.value ) }
 			>
-				<option value="">{ __( 'Select an ability…', 'baton' ) }</option>
+				<option value="">
+					{ __( 'Select an ability…', 'baton' ) }
+				</option>
 				{ groups.map( ( group ) => (
 					<optgroup key={ group.label } label={ group.label }>
 						{ group.abilities.map( ( ability ) => (
@@ -75,15 +72,29 @@ function AbilitySelect( { value, abilities, onChange } ) {
 
 function IoChip( { label, sublabel, summary, isSingleValue, onClick } ) {
 	return (
-		<button type="button" className={ `baton-io-chip${ isSingleValue ? ' baton-io-chip--single' : '' }` } onClick={ onClick }>
+		<button
+			type="button"
+			className={ `baton-io-chip${
+				isSingleValue ? ' baton-io-chip--single' : ''
+			}` }
+			onClick={ onClick }
+		>
 			<span className="baton-io-chip__label">{ label }</span>
-			{ sublabel && <span className="baton-io-chip__sublabel">{ sublabel }</span> }
+			{ sublabel && (
+				<span className="baton-io-chip__sublabel">{ sublabel }</span>
+			) }
 			<span className="baton-io-chip__value">{ summary }</span>
 		</button>
 	);
 }
 
-function DataFilterSlot( { downstreamIndex, steps, abilities, onConfigure, onRemove } ) {
+function DataFilterSlot( {
+	downstreamIndex,
+	steps,
+	abilities,
+	onConfigure,
+	onRemove,
+} ) {
 	const downstream = steps[ downstreamIndex ];
 	const mappings = downstream?.input_mappings || [];
 	const hasMappings = mappings.length > 0;
@@ -139,33 +150,54 @@ function DataFilterNode( {
 	const downstream = steps[ downstreamIndex ];
 	const downstreamAbility = getAbility( abilities, downstream?.ability );
 	const upstream = downstreamIndex > 0 ? steps[ downstreamIndex - 1 ] : null;
-	const upstreamAbility = upstream ? getAbility( abilities, upstream.ability ) : null;
+	const upstreamAbility = upstream
+		? getAbility( abilities, upstream.ability )
+		: null;
 
 	const mappings = downstream?.input_mappings || [];
 
 	const fromLabel =
 		downstreamIndex > 0 && upstreamAbility
-			? `${ __( 'From', 'baton' ) } ${ __( 'Step', 'baton' ) } ${ downstreamIndex }: ${ upstreamAbility.label }`
+			? `${ __( 'From', 'baton' ) } ${ __(
+					'Step',
+					'baton'
+			  ) } ${ downstreamIndex }: ${ upstreamAbility.label }`
 			: __( 'From workflow input', 'baton' );
 
-	const toLabel =
-		downstreamAbility
-			? `${ __( 'Into', 'baton' ) } ${ __( 'Step', 'baton' ) } ${ downstreamIndex + 1 }: ${ downstreamAbility.label }`
-			: `${ __( 'Into', 'baton' ) } ${ __( 'Step', 'baton' ) } ${ downstreamIndex + 1 }`;
+	const toLabel = downstreamAbility
+		? `${ __( 'Into', 'baton' ) } ${ __( 'Step', 'baton' ) } ${
+				downstreamIndex + 1
+		  }: ${ downstreamAbility.label }`
+		: `${ __( 'Into', 'baton' ) } ${ __( 'Step', 'baton' ) } ${
+				downstreamIndex + 1
+		  }`;
 
 	return (
 		<Card className="baton-filter-node baton-filter-node--configured">
 			<CardHeader>
 				<div className="baton-filter-node__header">
 					<div>
-						<span className="baton-filter-node__type">{ __( 'Data filter', 'baton' ) }</span>
-						<strong className="baton-filter-node__title">{ __( 'Data flow', 'baton' ) }</strong>
+						<span className="baton-filter-node__type">
+							{ __( 'Data filter', 'baton' ) }
+						</span>
+						<strong className="baton-filter-node__title">
+							{ __( 'Data flow', 'baton' ) }
+						</strong>
 					</div>
 					<div className="baton-filter-node__actions">
-						<Button variant="link" isDestructive onClick={ onRemove } size="small">
+						<Button
+							variant="link"
+							isDestructive
+							onClick={ onRemove }
+							size="small"
+						>
 							{ __( 'Clear', 'baton' ) }
 						</Button>
-						<Button variant="secondary" onClick={ onConfigure } size="small">
+						<Button
+							variant="secondary"
+							onClick={ onConfigure }
+							size="small"
+						>
 							{ __( 'Edit mapping', 'baton' ) }
 						</Button>
 					</div>
@@ -173,16 +205,28 @@ function DataFilterNode( {
 			</CardHeader>
 			<CardBody>
 				<div className="baton-filter-node__route">
-					<span className="baton-filter-node__endpoint">{ fromLabel }</span>
-					<span className="baton-filter-node__arrow" aria-hidden="true">
+					<span className="baton-filter-node__endpoint">
+						{ fromLabel }
+					</span>
+					<span
+						className="baton-filter-node__arrow"
+						aria-hidden="true"
+					>
 						→
 					</span>
-					<span className="baton-filter-node__endpoint">{ toLabel }</span>
+					<span className="baton-filter-node__endpoint">
+						{ toLabel }
+					</span>
 				</div>
 				<ul className="baton-filter-node__mappings">
 					{ mappings.map( ( mapping, i ) => (
 						<li key={ i }>
-							<code>{ mappingRowLabel( mapping, downstreamAbility ) }</code>
+							<code>
+								{ mappingRowLabel(
+									mapping,
+									downstreamAbility
+								) }
+							</code>
 						</li>
 					) ) }
 				</ul>
@@ -201,7 +245,9 @@ function DataFilterPanel( {
 	const downstream = steps[ stepIndex ];
 	const downstreamAbility = getAbility( abilities, downstream?.ability );
 	const upstream = stepIndex > 0 ? steps[ stepIndex - 1 ] : null;
-	const upstreamAbility = upstream ? getAbility( abilities, upstream.ability ) : null;
+	const upstreamAbility = upstream
+		? getAbility( abilities, upstream.ability )
+		: null;
 
 	const [ draftMappings, setDraftMappings ] = useState( () => {
 		const saved = downstream?.input_mappings;
@@ -267,7 +313,10 @@ function DataFilterPanel( {
 
 	return (
 		<Modal
-			title={ `${ __( 'Configure data filter', 'baton' ) } — ${ __( 'Step', 'baton' ) } ${ stepIndex + 1 }` }
+			title={ `${ __( 'Configure data filter', 'baton' ) } — ${ __(
+				'Step',
+				'baton'
+			) } ${ stepIndex + 1 }` }
 			onRequestClose={ onClose }
 			className="baton-data-filter-modal"
 		>
@@ -283,8 +332,7 @@ function DataFilterPanel( {
 					{ upstreamAbility.output_summary?.summary }
 					<span className="baton-schema-hint">
 						{ ' ' }
-						(
-						{ __( 'ability output schema', 'baton' ) })
+						({ __( 'ability output schema', 'baton' ) })
 					</span>
 				</p>
 			) }
@@ -294,22 +342,27 @@ function DataFilterPanel( {
 					{ downstreamAbility.input_summary?.summary }
 					<span className="baton-schema-hint">
 						{ ' ' }
-						(
-						{ __( 'ability input schema', 'baton' ) })
+						({ __( 'ability input schema', 'baton' ) })
 					</span>
 				</p>
 			) }
 			{ stepIndex > 0 && ! upstreamAbility && (
 				<Notice status="warning" isDismissible={ false }>
-					{ __( 'Select an ability on the previous step first.', 'baton' ) }
+					{ __(
+						'Select an ability on the previous step first.',
+						'baton'
+					) }
 				</Notice>
 			) }
 			{ mappings.map( ( mapping, rowIndex ) => (
 				<div key={ rowIndex } className="baton-mapping-row">
 					<div className="baton-mapping-row__fields">
-						{ stepIndex > 0 && ! upstreamAbility?.source_selectable ? (
+						{ stepIndex > 0 &&
+						! upstreamAbility?.source_selectable ? (
 							<div className="baton-mapping-readonly">
-								<label>{ __( 'Source path', 'baton' ) }</label>
+								<span className="baton-mapping-readonly__label">
+									{ __( 'Source path', 'baton' ) }
+								</span>
 								<div className="baton-mapping-readonly__value">
 									{ upstreamAbility?.source_display?.label ||
 										__( 'Previous step output', 'baton' ) }
@@ -318,31 +371,48 @@ function DataFilterPanel( {
 						) : (
 							<SelectControl
 								label={ __( 'Source path', 'baton' ) }
-								help={ __( 'Value taken from the previous step or workflow input.', 'baton' ) }
+								help={ __(
+									'Value taken from the previous step or workflow input.',
+									'baton'
+								) }
 								value={ mapping.path || '' }
 								options={ [
-									{ value: '', label: __( 'Select path…', 'baton' ) },
+									{
+										value: '',
+										label: __( 'Select path…', 'baton' ),
+									},
 									...sourceOptions,
 								] }
-								onChange={ ( path ) => updateMapping( rowIndex, 'path', path ) }
+								onChange={ ( path ) =>
+									updateMapping( rowIndex, 'path', path )
+								}
 							/>
 						) }
 						<span className="baton-mapping-arrow">→</span>
 						{ ! downstreamAbility?.target_selectable ? (
 							<div className="baton-mapping-readonly">
-								<label>{ __( 'Target', 'baton' ) }</label>
+								<span className="baton-mapping-readonly__label">
+									{ __( 'Target', 'baton' ) }
+								</span>
 								<div className="baton-mapping-readonly__value">
-									{ downstreamAbility?.target_display?.label ||
+									{ downstreamAbility?.target_display
+										?.label ||
 										__( 'Entire input', 'baton' ) }
 								</div>
 							</div>
 						) : (
 							<SelectControl
 								label={ __( 'Target field', 'baton' ) }
-								help={ __( 'Field on the next step’s input object.', 'baton' ) }
+								help={ __(
+									'Field on the next step’s input object.',
+									'baton'
+								) }
 								value={ mapping.target || '' }
 								options={ [
-									{ value: '', label: __( 'Select field…', 'baton' ) },
+									{
+										value: '',
+										label: __( 'Select field…', 'baton' ),
+									},
 									...targetOptions,
 								] }
 								onChange={ ( target ) =>
@@ -390,9 +460,11 @@ function IoDetailPanel( { panel, abilities, steps, onClose, onInputChange } ) {
 		if ( ! panel || ! isInput ) {
 			return;
 		}
-		setInputDraft( formatStepInput( steps[ panel.stepIndex ]?.input, ability ) );
+		setInputDraft(
+			formatStepInput( steps[ panel.stepIndex ]?.input, ability )
+		);
 		setJsonError( null );
-	}, [ panel?.stepIndex, panel?.kind, ability?.slug, isInput ] );
+	}, [ panel?.stepIndex, panel?.kind, ability?.slug, isInput ] ); // eslint-disable-line react-hooks/exhaustive-deps -- avoid resetting draft while typing.
 
 	if ( ! panel ) {
 		return null;
@@ -443,8 +515,14 @@ function IoDetailPanel( { panel, abilities, steps, onClose, onInputChange } ) {
 		<Modal
 			title={
 				isInput
-					? `${ __( 'Ability input schema', 'baton' ) } — ${ __( 'Step', 'baton' ) } ${ panel.stepIndex + 1 }`
-					: `${ __( 'Ability output schema', 'baton' ) } — ${ __( 'Step', 'baton' ) } ${ panel.stepIndex + 1 }`
+					? `${ __( 'Ability input schema', 'baton' ) } — ${ __(
+							'Step',
+							'baton'
+					  ) } ${ panel.stepIndex + 1 }`
+					: `${ __( 'Ability output schema', 'baton' ) } — ${ __(
+							'Step',
+							'baton'
+					  ) } ${ panel.stepIndex + 1 }`
 			}
 			onRequestClose={ handleClose }
 		>
@@ -478,7 +556,10 @@ function IoDetailPanel( { panel, abilities, steps, onClose, onInputChange } ) {
 					) }
 					{ ability.input_is_scalar ? (
 						<TextControl
-							label={ __( 'Static input (optional override)', 'baton' ) }
+							label={ __(
+								'Static input (optional override)',
+								'baton'
+							) }
 							help={ __(
 								'Fixed value merged at run time; overrides data filter mappings for this step.',
 								'baton'
@@ -521,7 +602,8 @@ function StepCard( {
 	onRemove,
 } ) {
 	const ability = getAbility( abilities, step.ability );
-	const inputSummary = ability?.input_summary?.summary || __( 'No input', 'baton' );
+	const inputSummary =
+		ability?.input_summary?.summary || __( 'No input', 'baton' );
 	const outputSummary =
 		ability?.output_summary?.summary || __( 'Unknown', 'baton' );
 	const isSingleInput = ability?.input_summary?.kind === 'single_value';
@@ -531,7 +613,9 @@ function StepCard( {
 			<CardHeader>
 				<div className="baton-step-card__header">
 					<div>
-						<span className="baton-step-card__type">{ __( 'Ability step', 'baton' ) }</span>
+						<span className="baton-step-card__type">
+							{ __( 'Ability step', 'baton' ) }
+						</span>
 						<strong>
 							{ __( 'Step', 'baton' ) } { index + 1 }
 							{ ability ? `: ${ ability.label }` : '' }
@@ -611,7 +695,9 @@ function StepCard( {
 export default function WorkflowEditor( { abilities, initialDefinition } ) {
 	const [ steps, setSteps ] = useState( () => {
 		const s = initialDefinition?.steps;
-		return s?.length ? s.map( ( step ) => ( { ...step } ) ) : [ defaultStep() ];
+		return s?.length
+			? s.map( ( step ) => ( { ...step } ) )
+			: [ defaultStep() ];
 	} );
 	const [ activeFilter, setActiveFilter ] = useState( null );
 	const [ ioPanel, setIoPanel ] = useState( null );
@@ -639,7 +725,9 @@ export default function WorkflowEditor( { abilities, initialDefinition } ) {
 
 	const updateStep = ( index, patch ) => {
 		setSteps( ( prev ) =>
-			prev.map( ( step, i ) => ( i === index ? { ...step, ...patch } : step ) )
+			prev.map( ( step, i ) =>
+				i === index ? { ...step, ...patch } : step
+			)
 		);
 	};
 
@@ -647,7 +735,8 @@ export default function WorkflowEditor( { abilities, initialDefinition } ) {
 		const ability = getAbility( abilities, slug );
 		let input = {};
 		if ( ability ) {
-			input = ability.example_input ?? ( ability.input_is_scalar ? '' : {} );
+			input =
+				ability.example_input ?? ( ability.input_is_scalar ? '' : {} );
 		}
 		updateStep( index, {
 			ability: slug,
@@ -695,11 +784,18 @@ export default function WorkflowEditor( { abilities, initialDefinition } ) {
 
 	return (
 		<div className="baton-editor">
-			<Notice status="info" isDismissible={ false } className="baton-editor__intro">
+			<Notice
+				status="info"
+				isDismissible={ false }
+				className="baton-editor__intro"
+			>
 				<p>
 					<strong>{ __( 'Ability steps', 'baton' ) }</strong>
 					{ ' — ' }
-					{ __( 'run abilities in order; input/output chips show each ability’s schema.', 'baton' ) }
+					{ __(
+						'run abilities in order; input/output chips show each ability’s schema.',
+						'baton'
+					) }
 				</p>
 				<p>
 					<strong>{ __( 'Data filter nodes', 'baton' ) }</strong>
@@ -714,7 +810,9 @@ export default function WorkflowEditor( { abilities, initialDefinition } ) {
 			<div className="baton-editor__toolbar">
 				<Button
 					variant="primary"
-					onClick={ () => setSteps( ( prev ) => [ ...prev, defaultStep() ] ) }
+					onClick={ () =>
+						setSteps( ( prev ) => [ ...prev, defaultStep() ] )
+					}
 				>
 					{ __( 'Add step', 'baton' ) }
 				</Button>
@@ -722,13 +820,18 @@ export default function WorkflowEditor( { abilities, initialDefinition } ) {
 
 			<div className="baton-editor__chain">
 				{ steps.map( ( step, index ) => (
-					<div key={ `step-${ index }` } className="baton-editor__segment">
+					<div
+						key={ `step-${ index }` }
+						className="baton-editor__segment"
+					>
 						<StepCard
 							step={ step }
 							index={ index }
 							abilities={ abilities }
 							totalSteps={ steps.length }
-							onAbilityChange={ ( slug ) => changeAbility( index, slug ) }
+							onAbilityChange={ ( slug ) =>
+								changeAbility( index, slug )
+							}
 							onIoClick={ ( stepIndex, kind ) =>
 								setIoPanel( { stepIndex, kind } )
 							}
@@ -741,8 +844,12 @@ export default function WorkflowEditor( { abilities, initialDefinition } ) {
 								downstreamIndex={ index + 1 }
 								steps={ steps }
 								abilities={ abilities }
-								onConfigure={ () => setActiveFilter( index + 1 ) }
-								onRemove={ () => changeMappings( index + 1, [] ) }
+								onConfigure={ () =>
+									setActiveFilter( index + 1 )
+								}
+								onRemove={ () =>
+									changeMappings( index + 1, [] )
+								}
 							/>
 						) }
 					</div>

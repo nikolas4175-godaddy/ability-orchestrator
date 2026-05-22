@@ -1,0 +1,14 @@
+parameters:
+	level: 5
+	paths:
+		- baton.php
+		- includes/
+	excludePaths:
+		- vendor/
+		- node_modules/
+		- build/
+		- tests/
+	bootstrapFiles:
+		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+		- phpstan-bootstrap.php
+	treatPhpDocTypesAsCertain: false

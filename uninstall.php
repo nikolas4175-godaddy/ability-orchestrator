@@ -19,7 +19,7 @@ $post_ids = get_posts(
 );
 
 if ( is_array( $post_ids ) ) {
-	foreach ( $post_ids as $post_id ) {
-		wp_delete_post( (int) $post_id, true );
+	foreach ( $post_ids as $workflow_post_id ) {
+		wp_delete_post( (int) $workflow_post_id, true );
 	}
 }

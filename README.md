@@ -11,6 +11,12 @@ Baton is a WordPress plugin that adds a thin, lightweight layer used by admins t
 - WordPress 6.9+
 - PHP 7.4+
 
+## Try it on Playground
+
+[![Try Baton on WordPress Playground](https://img.shields.io/badge/Try%20it%20on-WordPress%20Playground-blue)](https://playground.wordpress.net/#?blueprint-url=https://raw.githubusercontent.com/nikolas4175-godaddy/baton/main/blueprint.json)
+
+Opens a disposable WordPress 6.9 site with Baton installed and lands on **Tools → Baton**.
+
 ## Installation
 
 1. Clone this repository into `wp-content/plugins/baton`.
@@ -33,6 +39,31 @@ npm run build
 ```
 
 After making any changes within `src/`, run `npm run build` (or `npm start` while developing). The built files land in `build/` and are enqueued on the workflow edit screen.
+
+## Development
+
+PHP (Composer):
+
+```bash
+composer install
+composer phpcs
+composer phpstan
+```
+
+Integration tests (requires [Docker](https://www.docker.com/) for `@wordpress/env`):
+
+```bash
+npm install
+npx wp-env start
+npm run test:php
+```
+
+JavaScript:
+
+```bash
+npm run lint:js
+npm run build
+```
 
 ## License
 

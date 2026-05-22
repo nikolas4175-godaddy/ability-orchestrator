@@ -1,0 +1,30 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "Baton",
+		"author": "Nik McLaughlin",
+		"description": "Orchestrate WordPress workflows with the Abilities API."
+	},
+	"landingPage": "/wp-admin/tools.php?page=baton",
+	"preferredVersions": {
+		"php": "8.3",
+		"wp": "6.9"
+	},
+	"steps": [
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "git:directory",
+				"url": "https://github.com/nikolas4175-godaddy/baton",
+				"ref": "main",
+				"refType": "branch"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "login"
+		}
+	]
+}

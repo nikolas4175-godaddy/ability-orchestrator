@@ -1,8 +1,8 @@
 ( function () {
 	'use strict';
 
-	var cfg = window.Baton || {};
-	var strings = cfg.strings || {};
+	const cfg = window.Baton || {};
+	const strings = cfg.strings || {};
 
 	function parseJson( text, fallback ) {
 		if ( ! text || ! text.trim() ) {
@@ -20,7 +20,7 @@
 	}
 
 	function escapeHtml( text ) {
-		var div = document.createElement( 'div' );
+		const div = document.createElement( 'div' );
 		div.textContent = text;
 		return div.innerHTML;
 	}
@@ -32,8 +32,8 @@
 	}
 
 	var RunPanel = {
-		init: function () {
-			var btn = document.getElementById( 'aw-run-workflow' );
+		init() {
+			const btn = document.getElementById( 'aw-run-workflow' );
 			if ( ! btn ) {
 				return;
 			}
@@ -41,17 +41,19 @@
 			btn.addEventListener( 'click', this.run.bind( this ) );
 
 			if ( window.location.hash === '#aw-run-panel' ) {
-				var panel = document.getElementById( 'aw-run-panel' );
+				const panel = document.getElementById( 'aw-run-panel' );
 				if ( panel ) {
 					panel.scrollIntoView( { behavior: 'smooth' } );
 				}
 			}
 		},
 
-		run: function () {
-			var btn = document.getElementById( 'aw-run-workflow' );
-			var results = document.getElementById( 'aw-run-results' );
-			var initialInput = document.getElementById( 'aw-run-initial-input' );
+		run() {
+			const btn = document.getElementById( 'aw-run-workflow' );
+			const results = document.getElementById( 'aw-run-results' );
+			const initialInput = document.getElementById(
+				'aw-run-initial-input'
+			);
 
 			if ( ! btn || ! results ) {
 				return;
@@ -59,20 +61,28 @@
 
 			syncDefinition();
 
-			var hidden = document.getElementById( 'workflow_definition' );
-			var definition = parseJson( hidden ? hidden.value : '', {} );
-			if ( ! definition || ! definition.steps || ! definition.steps.length ) {
+			const hidden = document.getElementById( 'workflow_definition' );
+			const definition = parseJson( hidden ? hidden.value : '', {} );
+			if (
+				! definition ||
+				! definition.steps ||
+				! definition.steps.length
+			) {
 				window.alert(
 					strings.noSteps || 'Add at least one step before running.'
 				);
 				return;
 			}
 
-			var initial = parseJson(
+			const initial = parseJson(
 				initialInput ? initialInput.value : '',
 				{}
 			);
-			if ( initialInput && initialInput.value.trim() && initial === null ) {
+			if (
+				initialInput &&
+				initialInput.value.trim() &&
+				initial === null
+			) {
 				window.alert( strings.invalidJson || 'Invalid JSON.' );
 				return;
 			}
@@ -85,10 +95,13 @@
 				escapeHtml( strings.running || 'Running…' ) +
 				'</p>';
 
-			var body = new FormData();
+			const body = new FormData();
 			body.append( 'action', 'baton_run' );
 			body.append( 'nonce', cfg.nonce );
-			body.append( 'workflow_id', btn.getAttribute( 'data-workflow-id' ) );
+			body.append(
+				'workflow_id',
+				btn.getAttribute( 'data-workflow-id' )
+			);
 			body.append(
 				'initial_input',
 				initialInput ? initialInput.value : '{}'
@@ -96,7 +109,7 @@
 
 			fetch( cfg.ajaxUrl, {
 				method: 'POST',
-				body: body,
+				body,
 				credentials: 'same-origin',
 			} )
 				.then( function ( response ) {
@@ -119,21 +132,20 @@
 				} );
 		},
 
-		renderResults: function ( data ) {
-			var results = document.getElementById( 'aw-run-results' );
+		renderResults( data ) {
+			const results = document.getElementById( 'aw-run-results' );
 			if ( ! results ) {
 				return;
 			}
 
-			var report = data.data || data;
-			var html = '';
+			const report = data.data || data;
+			let html = '';
 
 			if ( data.success ) {
 				html +=
 					'<div class="notice notice-success"><p>' +
 					escapeHtml(
-						strings.runSuccess ||
-							'Workflow completed successfully.'
+						strings.runSuccess || 'Workflow completed successfully.'
 					) +
 					'</p></div>';
 			} else {
@@ -148,7 +160,7 @@
 			if ( report.steps && report.steps.length ) {
 				html += '<div class="aw-run-steps">';
 				report.steps.forEach( function ( step, i ) {
-					var statusClass = step.success
+					const statusClass = step.success
 						? 'aw-step-ok'
 						: 'aw-step-fail';
 					html +=
@@ -195,11 +207,11 @@
 	document.addEventListener( 'DOMContentLoaded', function () {
 		RunPanel.init();
 
-		var copyBtn = document.getElementById( 'baton-copy-ability-slug' );
-		var slugEl = document.getElementById( 'baton-ability-slug' );
+		const copyBtn = document.getElementById( 'baton-copy-ability-slug' );
+		const slugEl = document.getElementById( 'baton-ability-slug' );
 		if ( copyBtn && slugEl ) {
 			copyBtn.addEventListener( 'click', function () {
-				var text = slugEl.textContent || '';
+				const text = slugEl.textContent || '';
 				if ( navigator.clipboard && navigator.clipboard.writeText ) {
 					navigator.clipboard.writeText( text );
 				}

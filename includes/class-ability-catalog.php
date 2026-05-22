@@ -55,9 +55,9 @@ final class Baton_Ability_Catalog {
 		$input_schema  = $ability->get_input_schema();
 		$output_schema = $ability->get_output_schema();
 
-		$is_scalar         = Baton_Input_Mapper::is_scalar_input_schema( $input_schema );
-		$input_catalog     = Baton_Schema_Paths::input_target_catalog( $input_schema );
-		$output_catalog    = Baton_Schema_Paths::output_path_catalog( $output_schema );
+		$is_scalar      = Baton_Input_Mapper::is_scalar_input_schema( $input_schema );
+		$input_catalog  = Baton_Schema_Paths::input_target_catalog( $input_schema );
+		$output_catalog = Baton_Schema_Paths::output_path_catalog( $output_schema );
 
 		return array(
 			'slug'              => $name,

@@ -75,8 +75,8 @@ final class Baton_Workflow_Abilities {
 	/**
 	 * Re-register when a workflow is saved.
 	 *
-	 * @param int      $post_id Post ID.
-	 * @param WP_Post  $post    Post object.
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
 	 */
 	public static function on_workflow_saved( int $post_id, WP_Post $post ): void {
 		if ( Baton_Workflow_CPT::POST_TYPE !== $post->post_type ) {
@@ -151,14 +151,14 @@ final class Baton_Workflow_Abilities {
 			wp_unregister_ability( $name );
 		}
 
-		$definition = Baton_Workflow_CPT::get_definition( $post_id );
+		$definition    = Baton_Workflow_CPT::get_definition( $post_id );
 		$output_schema = self::infer_output_schema( $definition );
 
 		wp_register_ability(
 			$name,
 			array(
 				'label'               => $post->post_title,
-				'description'         => $post->post_excerpt ?: sprintf(
+				'description'         => '' !== $post->post_excerpt ? $post->post_excerpt : sprintf(
 					/* translators: %d: workflow post ID */
 					__( 'Baton workflow #%d', 'baton' ),
 					$post_id

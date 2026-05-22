@@ -1,5 +1,5 @@
 /**
- * @param {Array} abilities
+ * @param {Array}  abilities
  * @param {string} slug
  */
 export function getAbility( abilities, slug ) {
@@ -9,9 +9,9 @@ export function getAbility( abilities, slug ) {
 /**
  * Group abilities by category label for <optgroup> rendering.
  *
- * @param {Array} abilities Catalog from PHP.
+ * @param {Array}  abilities  Catalog from PHP.
  * @param {string} otherLabel Label for uncategorized abilities.
- * @return {Array<{ label: string, abilities: Array }>}
+ * @return {Array<{ label: string, abilities: Array }>} Grouped abilities for optgroups.
  */
 export function groupAbilitiesByCategory( abilities, otherLabel = 'Other' ) {
 	const grouped = {};
@@ -85,7 +85,7 @@ export function parseStepInput( text, ability ) {
 }
 
 /**
- * @param {object} mapping
+ * @param {Object}      mapping
  * @param {object|null} downstreamAbility
  */
 export function mappingRowLabel( mapping, downstreamAbility ) {
@@ -101,7 +101,7 @@ export function mappingRowLabel( mapping, downstreamAbility ) {
 }
 
 /**
- * @param {Array} mappings
+ * @param {Array}       mappings
  * @param {object|null} downstreamAbility
  */
 export function connectorSummary( mappings, downstreamAbility ) {
@@ -115,14 +115,11 @@ export function connectorSummary( mappings, downstreamAbility ) {
 }
 
 /**
- * @param {object} definition
- */
-/**
  * Keep only complete mapping rows for persistence.
  *
- * @param {Array} mappings Draft rows.
+ * @param {Array}       mappings          Draft rows.
  * @param {object|null} downstreamAbility Ability meta.
- * @return {Array}
+ * @return {Array} Complete mapping rows safe to persist.
  */
 export function sanitizeMappingsForSave( mappings, downstreamAbility ) {
 	if ( ! Array.isArray( mappings ) ) {

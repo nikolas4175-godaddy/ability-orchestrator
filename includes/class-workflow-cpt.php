@@ -34,7 +34,7 @@ final class Baton_Workflow_CPT {
 		register_post_type(
 			self::POST_TYPE,
 			array(
-				'labels'              => array(
+				'labels'           => array(
 					'name'          => __( 'Baton', 'baton' ),
 					'singular_name' => __( 'Ability Workflow', 'baton' ),
 					'add_new'       => __( 'Add Workflow', 'baton' ),
@@ -44,13 +44,13 @@ final class Baton_Workflow_CPT {
 					'search_items'  => __( 'Search Workflows', 'baton' ),
 					'not_found'     => __( 'No workflows found.', 'baton' ),
 				),
-				'public'              => false,
-				'show_ui'             => false,
-				'show_in_menu'        => false,
-				'supports'            => array( 'title', 'excerpt' ),
-				'capability_type'     => 'post',
-				'map_meta_cap'        => true,
-				'delete_with_user'    => false,
+				'public'           => false,
+				'show_ui'          => false,
+				'show_in_menu'     => false,
+				'supports'         => array( 'title', 'excerpt' ),
+				'capability_type'  => 'post',
+				'map_meta_cap'     => true,
+				'delete_with_user' => false,
 			)
 		);
 	}
@@ -100,7 +100,7 @@ final class Baton_Workflow_CPT {
 	 * Sanitize definition from request/JSON.
 	 *
 	 * @param array<string, mixed> $raw Raw definition.
-	 * @return array<string, mixed>|WP_Error
+	 * @return array<string, mixed>
 	 */
 	public static function sanitize_definition( array $raw ) {
 		$definition = self::default_definition();

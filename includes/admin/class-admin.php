@@ -71,7 +71,7 @@ final class Baton_Admin {
 		$table = new Baton_Workflow_List_Table();
 		$table->prepare_items();
 
-		$new_url   = self::get_edit_url( 0 );
+		$new_url    = self::get_edit_url( 0 );
 		$banner_url = BATON_URL . 'assets/images/baton-banner.png';
 
 		echo '<div class="wrap baton-wrap baton-wrap--list">';
@@ -118,7 +118,11 @@ final class Baton_Admin {
 			$definition = Baton_Workflow_CPT::get_definition( $post_id );
 		}
 
-		if ( 'POST' === ( $_SERVER['REQUEST_METHOD'] ?? '' ) && isset( $_POST['baton_save'] ) ) {
+		$request_method = isset( $_SERVER['REQUEST_METHOD'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) )
+			: '';
+
+		if ( 'POST' === $request_method && isset( $_POST['baton_save'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified in handle_save_post().
 			self::handle_save_post( $post_id, $is_new );
 			return;
 		}
@@ -172,9 +176,9 @@ final class Baton_Admin {
 			$delete_url = wp_nonce_url(
 				add_query_arg(
 					array(
-						'page'         => self::PAGE_SLUG,
-						'action'       => 'delete',
-						'workflow_id'  => $post_id,
+						'page'        => self::PAGE_SLUG,
+						'action'      => 'delete',
+						'workflow_id' => $post_id,
 					),
 					admin_url( 'tools.php' )
 				),
@@ -263,19 +267,6 @@ final class Baton_Admin {
 		}
 
 		$definition = Baton_Workflow_CPT::sanitize_definition( $def_decoded );
-		if ( is_wp_error( $definition ) ) {
-			wp_safe_redirect(
-				add_query_arg(
-					array(
-						'page'   => self::PAGE_SLUG,
-						'action' => $is_new ? 'new' : 'edit',
-						'error'  => rawurlencode( $definition->get_error_message() ),
-					),
-					admin_url( 'tools.php' )
-				)
-			);
-			exit;
-		}
 
 		if ( '' === $title ) {
 			wp_safe_redirect(
@@ -466,11 +457,11 @@ final class Baton_Admin {
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'nonce'   => wp_create_nonce( self::NONCE_ACTION ),
 				'strings' => array(
-					'running'    => __( 'Running workflow…', 'baton' ),
-					'runSuccess' => __( 'Workflow completed successfully.', 'baton' ),
-					'runFailed'  => __( 'Workflow failed.', 'baton' ),
+					'running'     => __( 'Running workflow…', 'baton' ),
+					'runSuccess'  => __( 'Workflow completed successfully.', 'baton' ),
+					'runFailed'   => __( 'Workflow failed.', 'baton' ),
 					'invalidJson' => __( 'Invalid JSON.', 'baton' ),
-					'noSteps'    => __( 'Add at least one step before running.', 'baton' ),
+					'noSteps'     => __( 'Add at least one step before running.', 'baton' ),
 				),
 			)
 		);

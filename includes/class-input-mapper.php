@@ -231,10 +231,10 @@ final class Baton_Input_Mapper {
 	/**
 	 * Apply field mappings onto a base input array.
 	 *
-	 * @param array<string, mixed> $input          Base input (typically static JSON).
+	 * @param array<string, mixed>              $input          Base input (typically static JSON).
 	 * @param array<int, array<string, string>> $mappings Mapping definitions.
-	 * @param mixed                $previous_output Previous step output.
-	 * @param array<string, mixed> $initial_input   Workflow-level input.
+	 * @param mixed                             $previous_output Previous step output.
+	 * @param array<string, mixed>              $initial_input   Workflow-level input.
 	 * @return array{input: array<string, mixed>, warnings: array<int, string>}
 	 */
 	public static function apply_mappings(
