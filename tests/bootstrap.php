@@ -22,13 +22,20 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 require $_tests_dir . '/includes/functions.php';
 
 /**
+ * Load test fixtures before Baton so ability hooks register in time.
+ */
+function baton_manually_load_test_fixtures(): void {
+	require dirname( __DIR__ ) . '/tests/php/fixtures/test-abilities.php';
+}
+
+/**
  * Load Baton before the test suite runs.
  */
 function baton_manually_load_plugin(): void {
 	require dirname( __DIR__ ) . '/baton.php';
-	require dirname( __DIR__ ) . '/tests/php/fixtures/test-abilities.php';
 }
 
-tests_add_filter( 'muplugins_loaded', 'baton_manually_load_plugin' );
+tests_add_filter( 'muplugins_loaded', 'baton_manually_load_test_fixtures', 0 );
+tests_add_filter( 'muplugins_loaded', 'baton_manually_load_plugin', 1 );
 
 require $_tests_dir . '/includes/bootstrap.php';
