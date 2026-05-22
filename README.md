@@ -13,7 +13,7 @@ Baton is a WordPress plugin that adds a thin, lightweight layer used by admins t
 
 ## Try it on Playground
 
-[![Try Baton on WordPress Playground](https://img.shields.io/badge/Try%20it%20on-WordPress%20Playground-blue)](https://playground.wordpress.net/#?blueprint-url=https://raw.githubusercontent.com/nikolas4175-godaddy/baton/main/blueprint.json)
+[![Try Baton on WordPress Playground](https://img.shields.io/badge/Try%20it%20on-WordPress%20Playground-blue)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fnikolas4175-godaddy%2Fbaton%2Fmain%2Fblueprint.json)
 
 Opens a disposable WordPress 6.9 site with Baton installed and lands on **Tools → Baton**.
 
@@ -42,10 +42,29 @@ After making any changes within `src/`, run `npm run build` (or `npm start` whil
 
 ## Development
 
+### Before you push (fast static checks, no git hooks)
+
+Matches the **php-lint** and **js** CI jobs — usually a few seconds, no Docker:
+
+```bash
+composer install
+npm install
+npm run check
+```
+
+That runs PHP syntax (`php -l`), PHPCS, PHPStan, and ESLint on `src/`. Run integration tests separately when you change PHP behavior:
+
+```bash
+npm run test:php
+```
+
+### Individual commands
+
 PHP (Composer):
 
 ```bash
 composer install
+composer check      # syntax + phpcs + phpstan
 composer phpcs
 composer phpstan
 ```

@@ -7,6 +7,8 @@
     "start": "wp-scripts start",
     "lint:js": "wp-scripts lint-js src/",
     "lint:css": "wp-scripts lint-css",
+    "check": "npm run check:static",
+    "check:static": "composer check && npm run lint:js",
     "wp-env": "wp-env",
     "test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/baton -- composer test"
   },

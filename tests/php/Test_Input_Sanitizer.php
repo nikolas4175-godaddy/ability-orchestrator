@@ -55,7 +55,12 @@ class Test_Input_Sanitizer extends WP_UnitTestCase {
 	}
 
 	public function test_max_depth_truncates_deep_trees(): void {
-		$raw = array( 'l1' => array( 'l2' => array( 'l3' => array( 'l4' => array( 'l5' => array( 'l6' => array( 'l7' => array( 'l8' => array( 'l9' => array( 'l10' => array( 'l11' => 'deep' ) ) ) ) ) ) ) ) ) ) ) );
+		$raw = array( 'leaf' => 'deep' );
+
+		// Nest deeper than Baton_Input_Sanitizer::MAX_DEPTH (10).
+		for ( $i = 0; $i < 12; $i++ ) {
+			$raw = array( 'level_' . $i => $raw );
+		}
 
 		$out = Baton_Input_Sanitizer::sanitize_input_array( $raw );
 

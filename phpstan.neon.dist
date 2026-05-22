@@ -5,7 +5,7 @@ parameters:
 		- includes/
 	excludePaths:
 		- vendor/
-		- node_modules/
+		- node_modules (?)
 		- build/
 		- tests/
 	bootstrapFiles:

@@ -110,8 +110,7 @@ npm run build                  # after any src/ change
 npm start                      # watch mode while editing UI
 npm run lint:js
 composer install
-composer phpcs
-composer phpstan
+npm run check                  # static only (matches php-lint + js CI jobs)
 npx wp-env start               # Docker required
 npm run test:php
 ```

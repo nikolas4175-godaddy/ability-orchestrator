@@ -29,6 +29,12 @@
 	"scripts": {
 		"phpcs": "phpcs",
 		"phpstan": "phpstan analyse --memory-limit=2G",
+		"php-syntax": "bash -c 'set -e; find . \\( -path ./vendor -o -path ./node_modules \\) -prune -o -name \"*.php\" -print0 | xargs -0 -n1 php -l'",
+		"check": [
+			"@php-syntax",
+			"@phpcs",
+			"@phpstan"
+		],
 		"test": "phpunit"
 	}
 }
