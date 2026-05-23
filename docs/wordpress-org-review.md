@@ -96,7 +96,7 @@ Use this document before requesting a plugin slug or uploading to SVN. Re-run af
 - [x] `readme.txt` present
 - [x] Activation, deactivation, uninstall lifecycle
 - [x] Core feature (create/save/run workflow) implemented
-- [x] Screenshots in `.wordpress-org/screenshots/` (`screenshot-1.jpg`, `screenshot-2.jpg`)
+- [x] Screenshots in `.wordpress-org/` (`screenshot-1.jpg`, `screenshot-2.jpg`, flat layout)
 - [ ] **Manual smoke:** activate on WP 6.9+, save workflow, AJAX run, nest `baton/workflow-{id}`
 
 ### Guideline 17: Trademarks and Copyrights — **PASS with notes**
@@ -116,10 +116,10 @@ Use this document before requesting a plugin slug or uploading to SVN. Re-run af
 |------|------------------|-------|
 | `icon-256x256.png` | `.wordpress-org/icon-256x256.png` | 256×256 |
 | `banner-772x250.png` | `.wordpress-org/banner-772x250.png` | 772×250 |
-| `screenshot-1.jpg` | `.wordpress-org/screenshots/screenshot-1.jpg` | Caption 1 in `readme.txt` |
-| `screenshot-2.jpg` | `.wordpress-org/screenshots/screenshot-2.jpg` | Caption 2 in `readme.txt` |
+| `screenshot-1.jpg` | `.wordpress-org/screenshot-1.jpg` | Caption 1 in `readme.txt` |
+| `screenshot-2.jpg` | `.wordpress-org/screenshot-2.jpg` | Caption 2 in `readme.txt` |
 
-Copy these into the WordPress.org SVN `assets/` directory when the slug is approved (same filenames; PNG or JPG both accepted). Optional: add `banner-1544x500.png` (@2x) later. Repo layout and SVN mapping: [README.md — WordPress.org directory assets](../README.md#wordpressorg-directory-assets).
+Copy these into the WordPress.org SVN `assets/` directory when the slug is approved. Trunk contents follow [`.distignore`](../.distignore) (shared with `npm run release:org` and future [10up/action-wordpress-plugin-deploy](https://github.com/10up/action-wordpress-plugin-deploy)). Deploy workflow stub: [`.github/workflows/deploy.yml.example`](../.github/workflows/deploy.yml.example).
 
 ## Intentional product choices (not violations)
 

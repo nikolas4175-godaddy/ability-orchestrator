@@ -9,6 +9,7 @@
     "lint:css": "wp-scripts lint-css",
     "check": "npm run check:static",
     "check:static": "composer check && npm run lint:js",
+    "release:org": "bash scripts/build-wordpress-org-release.sh",
     "wp-env": "wp-env",
     "test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/baton -- composer test"
   },

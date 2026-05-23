@@ -2,37 +2,37 @@
 Contributors: nikolas4175-godaddy
 Tags: workflow, abilities, automation, admin
 Requires at least: 6.9
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Chain WordPress Abilities API abilities into saved workflows with field-level data mapping between steps.
-
 == Description ==
 
-Baton is a thin orchestration layer for the [WordPress Abilities API](https://developer.wordpress.org/apis/abilities/). Site administrators compose workflows in **Tools → Baton**, run them from the admin, and reuse saved workflows as nested abilities (`baton/workflow-{id}`).
+A conductor’s wand, properly called a baton, is a thin, lightweight stick used by music directors to amplify and guide physical gestures.
+
+Baton is a WordPress plugin that adds a thin, lightweight layer used by admins to orchestrate site workflows based on the WP [Abilities API](https://developer.wordpress.org/apis/abilities/). 
+
+It provides field-level input mapping to control data passing between registered Abilities, and each workflow is also exposed as it's own Ability (`baton/workflow-{id}`) for nesting or use in external tooling.
 
 **Features:**
 
 * Visual workflow editor (React) with ability steps and data filters between steps
-* Dot-path input mapping from initial workflow input or the previous step's output
+* Input mapping from static workflow input or the previous step's output
 * Each published workflow registers as its own ability for nesting and tooling
 * Cycle detection when workflows call each other
 * Prebuilt editor assets in `build/` — no Node.js required to use the plugin
 
 **Requirements:** WordPress 6.9 or later (Abilities API). PHP 7.4 or later.
 
-**Source code:** Editor UI source lives in `src/`; run `npm run build` after changes. See [CONTRIBUTING.md](https://github.com/nikolas4175-godaddy/baton/blob/main/CONTRIBUTING.md) and the GitHub repository for development setup.
-
 == Installation ==
 
-1. Upload the plugin folder to `/wp-content/plugins/baton`, or install from the WordPress.org plugin directory when available.
-2. Activate **Baton** through the **Plugins** screen.
-3. Open **Tools → Baton** to create and run workflows.
+**From WordPress.org**
+1. Install Baton through the WordPress plugin directory
+2. Activate **Baton** through the ‘Plugins’ menu in WordPress
+3. Go to **Tools > Baton** and queue the orchestra!
 
-Prebuilt editor assets are included in `build/` — you do not need Node or npm to use the plugin.
 
 == Frequently Asked Questions ==
 
@@ -42,7 +42,7 @@ Baton depends on the Abilities API (`wp_register_ability`, `wp_get_abilities`, a
 
 = Can I run workflows from the REST API or WP-CLI? =
 
-Each saved workflow is registered as an ability (`baton/workflow-{post_id}`). Workflows are intentionally not exposed via `show_in_rest` in this release; admin UI and ability execution are the supported paths. REST exposure may be added in a future version if external discovery is needed.
+Each saved workflow is registered as an ability (`baton/workflow-{post_id}`), but workflows are not exposed via `show_in_rest` at this point.
 
 = Do I need npm to use Baton? =
 
@@ -50,7 +50,7 @@ No. Only developers changing files under `src/` need to run `npm install` and `n
 
 = What happens when I uninstall Baton? =
 
-`uninstall.php` deletes all `baton_workflow` posts (and their definition meta) when the plugin is removed via the Plugins screen.
+Baton deletes all `baton_workflow` posts (and their definition meta) when the plugin is removed via the Plugins screen.
 
 == Screenshots ==
 

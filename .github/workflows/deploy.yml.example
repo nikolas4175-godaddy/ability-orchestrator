@@ -1,0 +1,42 @@
+# WordPress.org deploy — enable when the plugin slug is approved and SVN secrets exist.
+#
+# 1. Copy to deploy.yml (or rename this file).
+# 2. Add repository secrets: SVN_USERNAME, SVN_PASSWORD
+#    https://make.wordpress.org/meta/handbook/tools/account-settings/#svn-credentials
+# 3. Push a version tag, e.g. git tag 0.4.0 && git push origin 0.4.0
+#
+# Uses the same .distignore and .wordpress-org/ layout as npm run release:org.
+# Docs: https://github.com/10up/action-wordpress-plugin-deploy
+
+name: Deploy to WordPress.org
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run check
+
+      - name: Deploy to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@v2
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        with:
+          generate-zip: true
+          # dry-run: true   # uncomment for a test run without SVN commit
+
+      # Optional: attach zip-path output to the GitHub release

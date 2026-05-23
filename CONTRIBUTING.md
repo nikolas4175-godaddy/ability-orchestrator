@@ -61,7 +61,7 @@ Commit updated `build/index.js` and `build/index.asset.php` (and any other gener
 
 ## WordPress.org submission
 
-See [docs/wordpress-org-review.md](docs/wordpress-org-review.md) for the guideline pre-flight checklist. Directory assets live in [`.wordpress-org/`](.wordpress-org/); see [README.md — WordPress.org directory assets](README.md#wordpressorg-directory-assets).
+See [docs/wordpress-org-review.md](docs/wordpress-org-review.md) for the guideline pre-flight checklist. Directory assets: [`.wordpress-org/`](.wordpress-org/) (flat image files). Release build: `npm run release:org` (uses [`.distignore`](.distignore)). Future SVN deploy: [`.github/workflows/deploy.yml.example`](.github/workflows/deploy.yml.example).
 
 ## Agent / skill context
 

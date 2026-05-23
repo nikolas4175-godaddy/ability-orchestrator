@@ -90,14 +90,37 @@ npm run build
 
 Files under [`.wordpress-org/`](.wordpress-org/) are **not** included in the plugin zip. They are stored in Git for convenience and copied to the WordPress.org SVN **`assets/`** directory (top level, alongside `trunk/`) when publishing.
 
+Keep listing files **flat** in `.wordpress-org/` (no subfolders) so paths match SVN and [10up/action-wordpress-plugin-deploy](https://github.com/10up/action-wordpress-plugin-deploy):
+
 | Repo path | SVN destination | Notes |
 |-----------|-----------------|-------|
 | `.wordpress-org/icon-256x256.png` | `assets/icon-256x256.png` | 256×256 listing icon |
 | `.wordpress-org/banner-772x250.png` | `assets/banner-772x250.png` | 772×250 listing banner |
-| `.wordpress-org/screenshots/screenshot-1.jpg` | `assets/screenshot-1.jpg` | Workflow list (caption 1 in `readme.txt`) |
-| `.wordpress-org/screenshots/screenshot-2.jpg` | `assets/screenshot-2.jpg` | Editor (caption 2 in `readme.txt`) |
+| `.wordpress-org/screenshot-1.jpg` | `assets/screenshot-1.jpg` | Workflow list (caption 1 in `readme.txt`) |
+| `.wordpress-org/screenshot-2.jpg` | `assets/screenshot-2.jpg` | Editor (caption 2 in `readme.txt`) |
 
-PNG or JPG is fine for screenshots and banners ([Plugin Assets handbook](https://developer.wordpress.org/plugins/wordpress-org/plugin-assets/)). Keep only images in `.wordpress-org/` — no markdown or other files that could be copied into SVN by mistake.
+PNG or JPG is fine ([Plugin Assets handbook](https://developer.wordpress.org/plugins/wordpress-org/plugin-assets/)). Images only — no markdown in `.wordpress-org/`.
+
+Trunk exclusions for releases live in [`.distignore`](.distignore) (same file the 10up deploy action will use later).
+
+### Build release tree (until SVN deploy is wired up)
+
+```bash
+npm run release:org              # release/baton/ (SVN layout) + release/baton-{version}.zip
+npm run release:org -- --check   # run static checks first
+```
+
+| Build output | SVN destination |
+|--------------|-----------------|
+| `release/baton/assets/` | `assets/` |
+| `release/baton/trunk/` | `trunk/` |
+| `release/baton/tags/{version}/` | `tags/{version}/` |
+
+The script uses `.distignore` for trunk (aligned with 10up) and rsyncs `.wordpress-org/` → `assets/`. It also checks that `baton.php` `Version` matches `readme.txt` `Stable tag`.
+
+### Automated deploy (when slug + SVN credentials exist)
+
+Copy [`.github/workflows/deploy.yml.example`](.github/workflows/deploy.yml.example) to `deploy.yml`, add `SVN_USERNAME` / `SVN_PASSWORD` secrets, and push a version tag. No change to `.distignore` or `.wordpress-org/` layout required.
 
 Pre-submission checklist: [docs/wordpress-org-review.md](docs/wordpress-org-review.md).
 

@@ -1,0 +1,36 @@
+# Files excluded from WordPress.org trunk (and local release builds).
+# Used by scripts/build-wordpress-org-release.sh and, later, 10up/action-wordpress-plugin-deploy.
+# Syntax: paths from repo root (leading slash). No negation. See wp dist-archive / 10up action docs.
+
+/.wordpress-org
+/.git
+/.github
+/node_modules
+/vendor
+/tests
+/docs
+/scripts
+/release
+
+/README.md
+/CONTRIBUTING.md
+/AGENTS.md
+/blueprint.json
+
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+
+/phpcs.xml.dist
+/phpstan.neon.dist
+/phpstan-bootstrap.php
+/phpunit.xml.dist
+/.eslintrc.cjs
+/.wp-env.json
+/.wp-env.override.json
+
+/.gitignore
+/.distignore
+/.phpunit.result.cache
+/.DS_Store
