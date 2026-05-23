@@ -28,7 +28,24 @@ Prebuilt editor assets are included in `build/` — you do not need Node or npm 
 
 **Tools → Baton** — create workflows in the visual editor (vertical step cards, data filters on connectors), run them from the admin, and reference saved workflows as `baton/workflow-{post_id}` in other workflows.
 
-## Building the editor UI
+
+## Roadmap / Known Gaps 
+
+- Workflow-level **initial input → step 1 data filter** in the editor (runtime supports `initial_input`; UI exposure is limited).
+- CLI & Command Palette integrations for "external" workflow execution.
+- ActionScheduler integration for scheduling step/workflow execution.
+- Database/transient integration for persisting workflow output.
+- Advanced drag-and-drop workflow building UI.
+- Code snippet nodes for fully custom data processing.
+- Mapping auto-suggest from schema paths.
+- Replace list table with DataViews when appropriate in core.
+- User-facing copy pass on mapper warning strings.
+
+## Development
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for pull request prerequisites and command reference.
+
+### Building the editor UI
 
 Only needed when changing files under `src/`. The workflow editor is a React bundle built with `@wordpress/scripts`:
 
@@ -40,11 +57,7 @@ npm run build
 
 After making any changes within `src/`, run `npm run build` (or `npm start` while developing). The built files land in `build/` and are enqueued on the workflow edit screen.
 
-## Development
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for pull request prerequisites and command reference.
-
-### Before you push (fast static checks, no git hooks)
+### Before you push
 
 Matches the **php-lint** and **js** CI jobs — usually a few seconds, no Docker:
 
@@ -60,46 +73,9 @@ That runs PHP syntax (`php -l`), PHPCS, PHPStan, and ESLint on `src/`. Run integ
 npm run test:php
 ```
 
-### Individual commands
-
-PHP (Composer):
-
-```bash
-composer install
-composer check      # syntax + phpcs + phpstan
-composer phpcs
-composer phpstan
-```
-
-Integration tests (requires [Docker](https://www.docker.com/) for `@wordpress/env`):
-
-```bash
-npm install
-npx wp-env start
-npm run test:php
-```
-
-JavaScript:
-
-```bash
-npm run lint:js
-npm run build
-```
-
-## WordPress.org directory assets
+### WordPress.org directory assets
 
 Files under [`.wordpress-org/`](.wordpress-org/) are **not** included in the plugin zip. They are stored in Git for convenience and copied to the WordPress.org SVN **`assets/`** directory (top level, alongside `trunk/`) when publishing.
-
-Keep listing files **flat** in `.wordpress-org/` (no subfolders) so paths match SVN and [10up/action-wordpress-plugin-deploy](https://github.com/10up/action-wordpress-plugin-deploy):
-
-| Repo path | SVN destination | Notes |
-|-----------|-----------------|-------|
-| `.wordpress-org/icon-256x256.png` | `assets/icon-256x256.png` | 256×256 listing icon |
-| `.wordpress-org/banner-772x250.png` | `assets/banner-772x250.png` | 772×250 listing banner |
-| `.wordpress-org/screenshot-1.jpg` | `assets/screenshot-1.jpg` | Workflow list (caption 1 in `readme.txt`) |
-| `.wordpress-org/screenshot-2.jpg` | `assets/screenshot-2.jpg` | Editor (caption 2 in `readme.txt`) |
-
-PNG or JPG is fine ([Plugin Assets handbook](https://developer.wordpress.org/plugins/wordpress-org/plugin-assets/)). Images only — no markdown in `.wordpress-org/`.
 
 Trunk exclusions for releases live in [`.distignore`](.distignore) (same file the 10up deploy action will use later).
 
@@ -117,12 +93,6 @@ npm run release:org -- --check   # run static checks first
 | `release/baton/tags/{version}/` | `tags/{version}/` |
 
 The script uses `.distignore` for trunk (aligned with 10up) and rsyncs `.wordpress-org/` → `assets/`. It also checks that `baton.php` `Version` matches `readme.txt` `Stable tag`.
-
-### Automated deploy (when slug + SVN credentials exist)
-
-Copy [`.github/workflows/deploy.yml.example`](.github/workflows/deploy.yml.example) to `deploy.yml`, add `SVN_USERNAME` / `SVN_PASSWORD` secrets, and push a version tag. No change to `.distignore` or `.wordpress-org/` layout required.
-
-Pre-submission checklist: [docs/wordpress-org-review.md](docs/wordpress-org-review.md).
 
 ## License
 

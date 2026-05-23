@@ -1,5 +1,5 @@
 === Baton ===
-Contributors: nikolas4175-godaddy
+Contributors: nikskyverge
 Tags: workflow, abilities, automation, admin
 Requires at least: 6.9
 Tested up to: 7.0
@@ -8,7 +8,7 @@ Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Chain WordPress Abilities API abilities into saved workflows with field-level data mapping between steps.
+Orchestrate WordPress Abilities into custom workflows with a no-code visual editor.
 
 == Description ==
 
@@ -16,11 +16,11 @@ A conductor’s wand, properly called a baton, is a thin, lightweight stick used
 
 Baton is a WordPress plugin that adds a thin, lightweight layer used by admins to orchestrate site workflows based on the WP [Abilities API](https://developer.wordpress.org/apis/abilities/). 
 
-It provides field-level input mapping to control data passing between registered Abilities, and each workflow is also exposed as it's own Ability (`baton/workflow-{id}`) for nesting or use in external tooling.
+It provides field-level input mapping to control data passing between registered Abilities, and each workflow is also registered as it's own Ability (`baton/workflow-{id}`) for nesting or use in external tooling.
 
 **Features:**
 
-* Visual workflow editor (React) with ability steps and data filters between steps
+* Visual workflow editor with ability steps and data filters between steps
 * Input mapping from static workflow input or the previous step's output
 * Each published workflow registers as its own ability for nesting and tooling
 * Cycle detection when workflows call each other
@@ -46,10 +46,6 @@ Baton depends on the Abilities API (`wp_register_ability`, `wp_get_abilities`, a
 
 Each saved workflow is registered as an ability (`baton/workflow-{post_id}`), but workflows are not exposed via `show_in_rest` at this point.
 
-= Do I need npm to use Baton? =
-
-No. Only developers changing files under `src/` need to run `npm install` and `npm run build` to refresh `build/`.
-
 = What happens when I uninstall Baton? =
 
 Baton deletes all `baton_workflow` posts (and their definition meta) when the plugin is removed via the Plugins screen.
@@ -61,14 +57,26 @@ Baton deletes all `baton_workflow` posts (and their definition meta) when the pl
 
 == Changelog ==
 
+= 1.0.0 =
+* First stable WordPress.org release.
+* Fix workflow step JSON input in the editor (local draft while typing; saves on blur without resetting the field).
+* Add WordPress.org listing assets: banner, icon, and admin screenshots.
+* Plugin Check compliance: prefixed uninstall variables, readme short description, and rely on core translation loading for wordpress.org installs.
+* Add developer scripts for WordPress.org-compatible release packages.
+
 = 0.4.0 =
 * Abilities API workflow editor with data filters and input mapping
 * Workflow-as-ability registration (`baton/workflow-{id}`)
 * PHPUnit, PHPCS, PHPStan, and GitHub Actions CI
 * Plugin lifecycle: deactivation hook, uninstall cleanup, recursive input sanitization
-* Internationalization: text domain, `languages/baton.pot`
+* Internationalization support
+
+See the [GitHub releases](https://github.com/nikolas4175-godaddy/baton/releases) page for the full history.
 
 == Upgrade Notice ==
+
+= 1.0.0 =
+First stable public release on WordPress.org. Requires WordPress 6.9+ for the Abilities API.
 
 = 0.4.0 =
 Initial public release. Requires WordPress 6.9+ for the Abilities API.
