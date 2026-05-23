@@ -8,6 +8,8 @@ Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
+Chain WordPress Abilities API abilities into saved workflows with field-level data mapping between steps.
+
 == Description ==
 
 A conductor’s wand, properly called a baton, is a thin, lightweight stick used by music directors to amplify and guide physical gestures.

@@ -9,7 +9,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-$post_ids = get_posts(
+$baton_workflow_post_ids = get_posts(
 	array(
 		'post_type'      => 'baton_workflow',
 		'post_status'    => 'any',
@@ -18,8 +18,8 @@ $post_ids = get_posts(
 	)
 );
 
-if ( is_array( $post_ids ) ) {
-	foreach ( $post_ids as $workflow_post_id ) {
-		wp_delete_post( (int) $workflow_post_id, true );
+if ( is_array( $baton_workflow_post_ids ) ) {
+	foreach ( $baton_workflow_post_ids as $baton_workflow_post_id ) {
+		wp_delete_post( (int) $baton_workflow_post_id, true );
 	}
 }

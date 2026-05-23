@@ -56,12 +56,6 @@ final class Baton_Plugin {
 	 * Initialize plugin hooks.
 	 */
 	public function init(): void {
-		load_plugin_textdomain(
-			'baton',
-			false,
-			dirname( plugin_basename( BATON_FILE ) ) . '/languages'
-		);
-
 		if ( ! $this->abilities_available ) {
 			add_action( 'admin_notices', array( $this, 'render_missing_api_notice' ) );
 			return;
