@@ -141,4 +141,7 @@ PHP: no separate build step. Use strict types (`declare(strict_types=1);`) and m
 ## Related docs
 
 - [README.md](README.md) — install, usage, build instructions
+- [CONTRIBUTING.md](CONTRIBUTING.md) — PR checks, `npm run check`, build/test commands
+- [readme.txt](readme.txt) — WordPress.org plugin directory format
+- [docs/wordpress-org-review.md](docs/wordpress-org-review.md) — directory guideline pre-flight
 - [LICENSE](LICENSE) — GPL-2.0-or-later

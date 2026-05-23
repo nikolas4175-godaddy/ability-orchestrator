@@ -42,6 +42,8 @@ After making any changes within `src/`, run `npm run build` (or `npm start` whil
 
 ## Development
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for pull request prerequisites and command reference.
+
 ### Before you push (fast static checks, no git hooks)
 
 Matches the **php-lint** and **js** CI jobs — usually a few seconds, no Docker:
@@ -83,6 +85,21 @@ JavaScript:
 npm run lint:js
 npm run build
 ```
+
+## WordPress.org directory assets
+
+Files under [`.wordpress-org/`](.wordpress-org/) are **not** included in the plugin zip. They are stored in Git for convenience and copied to the WordPress.org SVN **`assets/`** directory (top level, alongside `trunk/`) when publishing.
+
+| Repo path | SVN destination | Notes |
+|-----------|-----------------|-------|
+| `.wordpress-org/icon-256x256.png` | `assets/icon-256x256.png` | 256×256 listing icon |
+| `.wordpress-org/banner-772x250.png` | `assets/banner-772x250.png` | 772×250 listing banner |
+| `.wordpress-org/screenshots/screenshot-1.jpg` | `assets/screenshot-1.jpg` | Workflow list (caption 1 in `readme.txt`) |
+| `.wordpress-org/screenshots/screenshot-2.jpg` | `assets/screenshot-2.jpg` | Editor (caption 2 in `readme.txt`) |
+
+PNG or JPG is fine for screenshots and banners ([Plugin Assets handbook](https://developer.wordpress.org/plugins/wordpress-org/plugin-assets/)). Keep only images in `.wordpress-org/` — no markdown or other files that could be copied into SVN by mistake.
+
+Pre-submission checklist: [docs/wordpress-org-review.md](docs/wordpress-org-review.md).
 
 ## License
 
